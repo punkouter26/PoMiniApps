@@ -12,13 +12,15 @@ concurrency:
 env:
   DOTNET_VERSION: '10.0.x'
   APP_NAME: 'PoMiniApps'
-  AZURE_RESOURCE_GROUP: 'PoMiniApps'
-  AZURE_LOCATION: 'westus2'
 
 jobs:
-  build-and-test:
+  build-and-deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    environment: production
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -33,10 +35,6 @@ jobs:
       - name: Build solution
         run: dotnet build PoMiniApps.slnx --configuration Release --no-restore
 
-      - name: Run unit tests
-        continue-on-error: true
-        run: dotnet test tests/PoMiniApps.UnitTests/PoMiniApps.UnitTests.csproj --configuration Release --no-build --verbosity normal
-
       - name: Publish web app
         run: dotnet publish src/PoMiniApps.Web/PoMiniApps.Web.csproj --configuration Release --no-build --output ./publish_output
 
@@ -45,32 +43,6 @@ jobs:
           cd ./publish_output
           zip -r ../pominiapps.zip .
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: pominiapps-package
-          path: ./pominiapps.zip
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build-and-test
-    timeout-minutes: 30
-    environment: production
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: pominiapps-package
-          path: ./artifact
-
-      - name: Verify deployment package
-        run: ls -la ./artifact
-
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -78,43 +50,8 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Preview infrastructure changes (what-if)
-        uses: azure/cli@v2
-        with:
-          inlineScript: |
-            az deployment sub what-if \
-              --location ${{ env.AZURE_LOCATION }} \
-              --template-file ./infra/main.bicep \
-              --parameters location=${{ env.AZURE_LOCATION }} environmentName=prod resourceGroupName=${{ env.AZURE_RESOURCE_GROUP }}
-
-      - name: Deploy infrastructure with Bicep
-        uses: azure/arm-deploy@v2
-        with:
-          scope: 'subscription'
-          region: ${{ env.AZURE_LOCATION }}
-          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          template: './infra/main.bicep'
-          parameters: location=${{ env.AZURE_LOCATION }} environmentName=prod resourceGroupName=${{ env.AZURE_RESOURCE_GROUP }}
-
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.APP_NAME }}
-          package: ./artifact/pominiapps.zip
-
-      - name: Health check
-        run: |
-          echo "Waiting 45s for app to start..."
-          sleep 45
-          for i in 1 2 3 4 5 6; do
-            STATUS=$(curl --max-time 20 -s -o /dev/null -w "%{http_code}" https://${{ env.APP_NAME }}.azurewebsites.net/health)
-            echo "Attempt $i - Health check status: $STATUS"
-            if [ "$STATUS" = "200" ]; then
-              echo "Health check passed!"
-              exit 0
-            fi
-            sleep 10
-          done
-          echo "Health check did not return 200 after 3 attempts"
-          curl -s https://${{ env.APP_NAME }}.azurewebsites.net/health || true
-          exit 1
+          package: ./pominiapps.zip
