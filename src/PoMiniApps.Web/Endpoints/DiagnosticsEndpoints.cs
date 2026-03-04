@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using PoMiniApps.Shared.Models;
 using System.Globalization;
 
@@ -12,27 +11,6 @@ public static class DiagnosticsEndpoints
     public static IEndpointRouteBuilder MapDiagnosticsEndpoints(this IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup("/api/diagnostics").WithTags("Diagnostics").WithOpenApi();
-
-        group.MapGet("/", async (HealthCheckService healthCheckService, ILogger<Program> logger) =>
-        {
-            var report = await healthCheckService.CheckHealthAsync();
-            var results = report.Entries.Select(entry =>
-            {
-                var isHealthy = entry.Value.Status == HealthStatus.Healthy;
-                if (!isHealthy) logger.LogWarning("{Check} failed: {Status}", entry.Key, entry.Value.Status);
-                return new DiagnosticResult
-                {
-                    CheckName = entry.Key,
-                    Success = isHealthy,
-                    Message = isHealthy ? $"{entry.Key} is healthy"
-                        : $"{entry.Key} failed: {entry.Value.Description ?? entry.Value.Exception?.Message ?? "Unknown error"}"
-                };
-            }).ToList();
-
-            return Results.Ok(results);
-        })
-        .WithName("RunDiagnostics")
-        .WithSummary("Runs all diagnostics checks and returns results.");
 
         group.MapGet("/config", (IConfiguration configuration) =>
         {

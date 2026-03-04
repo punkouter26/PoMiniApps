@@ -43,9 +43,6 @@ Content-Type: application/json
   "text": "Good morrow, dear friend! I trust this fine day finds you in excellent spirits."
 }
 
-### Run diagnostics
-GET {{PoMiniApps.Web_HostAddress}}/api/diagnostics
+### Get diagnostics configuration
+GET {{PoMiniApps.Web_HostAddress}}/api/diagnostics/config
 Accept: application/json
-
-### Health check
-GET {{PoMiniApps.Web_HostAddress}}/health

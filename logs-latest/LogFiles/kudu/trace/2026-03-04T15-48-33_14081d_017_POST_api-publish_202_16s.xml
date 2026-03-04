@@ -1,0 +1,16 @@
+<step title="Incoming Request" date="2026-03-04T15:48:33.642" instance="14081d" url="/api/publish?async=true&amp;deployer=GITHUB_ONE_DEPLOY&amp;type=zip&amp;message=%7B%22type%22%3A%22deployment%22%2C%22sha%22%3A%22431dab164d510ab358d03cb22265ea39e1301b12%22%2C%22repoName%22%3A%22punkouter26%2FPoMiniApps%22%2C%22actor%22%3A%22punkouter26%22%2C%22slotName%22%3A%22production%22%2C%22commitMessage%22%3A%22%22%7D" method="POST" type="request" pid="861,1,36" Host="pominiapps.scm.azurewebsites.net" User-Agent="GITHUBACTIONS_DeployWebAppToAzure_2ccc6b85bb7a081143755d0a53ff740b9aa0115453702c1ad27a216945dc5701_v3.0.7" Authorization="Bea..." Content-Type="application/octet-stream" Cookie="ARRAffinity=14081d20018b15b1623fc720b48f16fa62465e5170c988d77c1ce70393fc7d40; ARRAffinitySameSite=14081d20018b15b1623fc720b48f16fa62465e5170c988d77c1ce70393fc7d40" Transfer-Encoding="chunked" X-ARR-LOG-ID="85408fda-5191-4a77-8e55-2898b0f0a375" CLIENT-IP="172.183.131.18:1040" X-SITE-DEPLOYMENT-ID="PoMiniApps" WAS-DEFAULT-HOSTNAME="pominiapps.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/publish?async=true&amp;deployer=GITHUB_ONE_DEPLOY&amp;type=zip&amp;message=%7B%22type%22%3A%22deployment%22%2C%22sha%22%3A%22431dab164d510ab358d03cb22265ea39e1301b12%22%2C%22repoName%22%3A%22punkouter26%2FPoMiniApps%22%2C%22actor%22%3A%22punkouter26%22%2C%22slotName%22%3A%22production%22%2C%22commitMessage%22%3A%22%22%7D" X-Client-IP="172.183.131.18" X-Client-Port="1040" >
+  <step title="OneDeploy" date="2026-03-04T15:48:34.489" >
+    <step title="None repository commit" date="2026-03-04T15:48:34.562" >
+      <step title="Commit id: ecb20149-6a0a-4288-adc3-e9eba9454c26" date="2026-03-04T15:48:34.569" Message="N/A" AuthorName="N/A" AuthorEmail="N/A" /><!-- duration: 26ms -->
+    </step><!-- duration: 48ms -->
+    <step title="Starting PushDeployAsync" date="2026-03-04T15:48:34.619" /><!-- duration: 3ms -->
+    <step title="Writing artifact to /tmp/zipdeploy/0bcb4f0e-6ee4-4e8a-b03a-5ba097e7d75c.zip" date="2026-03-04T15:48:34.738" >
+      <step title="Writing multipart request body to /tmp/zipdeploy/0bcb4f0e-6ee4-4e8a-b03a-5ba097e7d75c.zip" date="2026-03-04T15:48:34.752" /><!-- duration: 8ms -->
+    </step><!-- duration: 14391ms -->
+    <step title="Start deployment in the background" date="2026-03-04T15:48:49.148" >
+      <step title="Acquiring Deployment Lock" date="2026-03-04T15:48:49.237" /><!-- duration: 3ms -->
+      <step title="Acquired Deployment Lock" date="2026-03-04T15:48:49.356" /><!-- duration: 2ms -->
+    </step><!-- duration: 439ms -->
+  </step><!-- duration: 15145ms -->
+  <step title="Outgoing response" date="2026-03-04T15:48:49.705" type="response" statusCode="202" statusText="Accepted" /><!-- duration: 9ms -->
+</step><!-- duration: 16083ms -->

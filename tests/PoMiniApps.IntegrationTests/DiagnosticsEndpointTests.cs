@@ -15,7 +15,7 @@ public class DiagnosticsEndpointTests
     [Fact]
     public async Task Diagnostics_Endpoint_ReturnsOk()
     {
-        var response = await _client.GetAsync("/api/diagnostics");
+        var response = await _client.GetAsync("/api/diagnostics/config");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 

@@ -1,0 +1,20 @@
+2026-03-04T14:28:21.0473424Z     __ __          __      __    _ __     
+2026-03-04T14:28:21.0492787Z    / //_/_  _ ____/ /_  __/ /   (_) /____ 
+2026-03-04T14:28:21.0492988Z   / ,< / / / / __  / / / / /   / / __/ _  
+2026-03-04T14:28:21.0493126Z  / /| / /_/ / /_/ / /_/ / /___/ / /_/  __/
+2026-03-04T14:28:21.0493187Z /_/ |_\__,_/\__,_/\__,_/_____/_/\__/\___/ 
+2026-03-04T14:28:21.0493263Z 
+2026-03-04T14:28:21.0493336Z                                           
+2026-03-04T14:28:21.0493394Z DEBUG CONSOLE | AZURE APP SERVICE ON LINUX
+2026-03-04T14:28:21.0493448Z 
+2026-03-04T14:28:21.0493510Z Documentation: http://aka.ms/webapp-linux
+2026-03-04T14:28:21.0493572Z Kudu Version : 20260204.5
+2026-03-04T14:28:21.0493661Z Commit       : f2123a3d94768058c9d9e002efc0a31e9c1580a3
+2026-03-04T14:28:21.0493721Z Instance Name: lw1sdlwk000AKC
+2026-03-04T14:28:21.0493789Z Instance Id  : 14081d20018b15b1623fc720b48f16fa62465e5170c988d77c1ce70393fc7d40
+2026-03-04T14:28:21.0493842Z 
+2026-03-04T14:28:28.5289643Z chown: changing ownership of '/temp': Operation not permitted
+2026-03-04T14:28:28.7707761Z chmod: changing permissions of '/temp': Operation not permitted
+2026-03-04T14:29:31.1193760Z  * Restarting OpenBSD Secure Shell server sshd
+2026-03-04T14:29:31.9571947Z    ...done.
+2026-03-04T14:29:32.4022008Z node not running, starting node /opt/webssh/index.js

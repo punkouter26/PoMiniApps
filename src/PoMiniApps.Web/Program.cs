@@ -3,7 +3,6 @@ using Microsoft.ApplicationInsights.Extensibility;
 using PoMiniApps.Web.Configuration;
 using PoMiniApps.Web.Endpoints;
 using PoMiniApps.Web.Extensions;
-using PoMiniApps.Web.HealthChecks;
 using PoMiniApps.Web.Hubs;
 using PoMiniApps.Web.Middleware;
 using PoMiniApps.Web.Services.AI;
@@ -165,13 +164,6 @@ try
     builder.Services.AddSingleton<DebateMetrics>();
     builder.Services.AddPoMiniGamesOpenTelemetry(builder.Configuration);
 
-    // ── Health Checks ────────────────────────────────────────────────────
-    builder.Services.AddHealthChecks()
-        .AddCheck<AzureOpenAIHealthCheck>("Azure OpenAI")
-        .AddCheck<AzureTableStorageHealthCheck>("Azure Table Storage")
-        .AddCheck<TextToSpeechHealthCheck>("TTS (Speech SDK)")
-        .AddCheck<AzureSpeechRestHealthCheck>("Azure Speech REST");
-
     // ── Exception Handler ────────────────────────────────────────────────
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
@@ -204,9 +196,6 @@ try
 
     app.UseStaticFiles();
     app.UseAntiforgery();
-
-    // ── Health endpoint ──────────────────────────────────────────────────
-    app.MapHealthChecks("/health");
 
     // ── Minimal API endpoints ────────────────────────────────────────────
     app.MapRapperEndpoints();
