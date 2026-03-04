@@ -10,6 +10,14 @@ public static class KeyVaultConfigurationExtensions
 {
     public static IConfigurationBuilder AddPoMiniGamesKeyVault(this IConfigurationBuilder builder, IConfiguration currentConfig)
     {
+        // Temporarily skip Key Vault in non-Development environments due to managed identity timeouts
+        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        if (environment != "Development")
+        {
+            Console.WriteLine("[INFO] Key Vault disabled in production - using app settings/environment variables");
+            return builder;
+        }
+
         var keyVaultName =
             currentConfig["PoMiniApps:Azure:KeyVault:Name"]
             ?? currentConfig["Azure:KeyVault:Name"]
