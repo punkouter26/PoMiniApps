@@ -37,7 +37,7 @@ resource sharedAppInsights 'Microsoft.Insights/components@2020-02-02' existing =
 
 // ── Web App (app-specific) ───────────────────────────────────────────────────
 resource webApp 'Microsoft.Web/sites@2022-03-01' = {
-  name: 'app-pominiapps'
+  name: 'PoMiniApps'
   location: location
   identity: {
     type: 'SystemAssigned'
