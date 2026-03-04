@@ -38,6 +38,10 @@ resource sharedAppInsights 'Microsoft.Insights/components@2020-02-02' existing =
 resource webApp 'Microsoft.Web/sites@2022-03-01' = {
   name: 'PoMiniApps'
   location: location
+  tags: {
+    environment: environmentName
+    application: 'PoMiniApps'
+  }
   identity: {
     type: 'SystemAssigned'
   }
@@ -105,6 +109,10 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: 'stpominiapps26'
   location: location
+  tags: {
+    environment: environmentName
+    application: 'PoMiniApps'
+  }
   sku: {
     name: 'Standard_LRS'
   }
