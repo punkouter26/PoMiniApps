@@ -10,7 +10,10 @@ public static class KeyVaultConfigurationExtensions
 {
     public static IConfigurationBuilder AddPoLingualKeyVault(this IConfigurationBuilder builder, IConfiguration currentConfig)
     {
-        var keyVaultName = currentConfig["Azure:KeyVault:Name"];
+        var keyVaultName =
+            currentConfig["PoMiniApps:Azure:KeyVault:Name"]
+            ?? currentConfig["Azure:KeyVault:Name"]
+            ?? currentConfig["Azure:KeyVaultName"];
         if (!string.IsNullOrWhiteSpace(keyVaultName))
         {
             try

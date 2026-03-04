@@ -12,9 +12,11 @@ public class TableStorageService : ITableStorageService
 
     public TableStorageService(IConfiguration configuration, ILogger<TableStorageService> logger)
     {
-        _connectionString = configuration["AzureStorageConnectionString"]
+        _connectionString = configuration["PoMiniApps:AzureStorageConnectionString"]
+            ?? configuration["PoMiniApps:Azure:StorageConnectionString"]
+            ?? configuration["AzureStorageConnectionString"]
             ?? configuration["Azure:StorageConnectionString"]
-            ?? throw new InvalidOperationException("AzureStorageConnectionString or Azure:StorageConnectionString not found in configuration.");
+            ?? throw new InvalidOperationException("PoMiniApps:AzureStorageConnectionString, PoMiniApps:Azure:StorageConnectionString, AzureStorageConnectionString or Azure:StorageConnectionString not found in configuration.");
         _logger = logger;
     }
 

@@ -16,9 +16,16 @@ param existingAppInsightsName string = 'poappideinsights8f9c9a4e'
 @description('Name of the existing App Service Plan in PoShared')
 param existingAppServicePlanName string = 'asp-poshared-linux'
 
+var storageConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=core.windows.net'
+
 // ── Reference existing App Service Plan from PoShared ──────────────────
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' existing = {
   name: existingAppServicePlanName
+  scope: resourceGroup(sharedResourceGroupName)
+}
+
+resource sharedLogAnalytics 'Microsoft.OperationalInsights/workspaces@2023-09-01' existing = {
+  name: existingLogAnalyticsName
   scope: resourceGroup(sharedResourceGroupName)
 }
 
@@ -42,16 +49,32 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
       alwaysOn: false
       appSettings: [
         {
+          name: 'Azure__KeyVault__Name'
+          value: 'kv-poshared'
+        }
+        {
           name: 'Azure__KeyVaultName'
           value: 'kv-poshared'
         }
         {
+          name: 'PoMiniApps__Azure__KeyVault__Name'
+          value: 'kv-poshared'
+        }
+        {
           name: 'AzureStorageConnectionString'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=core.windows.net'
+          value: storageConnectionString
         }
         {
           name: 'Azure__StorageConnectionString'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=core.windows.net'
+          value: storageConnectionString
+        }
+        {
+          name: 'PoMiniApps__AzureStorageConnectionString'
+          value: storageConnectionString
+        }
+        {
+          name: 'PoMiniApps__Azure__StorageConnectionString'
+          value: storageConnectionString
         }
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
@@ -60,6 +83,18 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
         {
           name: 'Azure__PoShared__ApplicationInsights__ConnectionString'
           value: sharedAppInsights.properties.ConnectionString
+        }
+        {
+          name: 'PoMiniApps__APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: sharedAppInsights.properties.ConnectionString
+        }
+        {
+          name: 'PoMiniApps__Azure__PoShared__ApplicationInsights__ConnectionString'
+          value: sharedAppInsights.properties.ConnectionString
+        }
+        {
+          name: 'PoMiniApps__Azure__PoShared__LogAnalytics__WorkspaceName'
+          value: sharedLogAnalytics.name
         }
       ]
     }

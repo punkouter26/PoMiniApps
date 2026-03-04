@@ -14,7 +14,9 @@ public static class OpenTelemetryExtensions
     public static IServiceCollection AddPoLingualOpenTelemetry(this IServiceCollection services, IConfiguration configuration)
     {
         var poSharedConnectionString =
-            configuration["Azure:PoShared:ApplicationInsights:ConnectionString"]
+            configuration["PoMiniApps:Azure:PoShared:ApplicationInsights:ConnectionString"]
+            ?? configuration["PoMiniApps:APPLICATIONINSIGHTS_CONNECTION_STRING"]
+            ?? configuration["Azure:PoShared:ApplicationInsights:ConnectionString"]
             ?? configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
 
         services.AddOpenTelemetry()
