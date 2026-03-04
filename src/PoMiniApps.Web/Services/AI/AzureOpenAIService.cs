@@ -23,9 +23,21 @@ public class AzureOpenAIService : IAzureOpenAIService
     public AzureOpenAIService(IConfiguration configuration, ILogger<AzureOpenAIService> logger)
     {
         _logger = logger;
-        var openAIEndpoint = configuration["AzureOpenAI:Endpoint"];
-        var openAIApiKey = configuration["AzureOpenAI:ApiKey"];
-        _openAIDeploymentName = configuration["AzureOpenAI:DeploymentName"] ?? "gpt-4o";
+        var openAIEndpoint = ResolveConfigValue(
+            configuration["Azure:OpenAI:Endpoint"],
+            configuration["AzureOpenAI:Endpoint"],
+            configuration["Azure:AzureOpenAIEndpoint"]);
+
+        var openAIApiKey = ResolveConfigValue(
+            configuration["Azure:OpenAI:ApiKey"],
+            configuration["AzureOpenAI:ApiKey"],
+            configuration["Azure:AzureOpenAIApiKey"]);
+
+        _openAIDeploymentName = ResolveConfigValue(
+            configuration["Azure:OpenAI:DeploymentName"],
+            configuration["AzureOpenAI:DeploymentName"],
+            configuration["Azure:AzureOpenAIDeploymentName"],
+            "gpt-4o");
 
         if (string.IsNullOrEmpty(openAIEndpoint) || string.IsNullOrEmpty(openAIApiKey))
         {
@@ -38,6 +50,19 @@ public class AzureOpenAIService : IAzureOpenAIService
         _chatClient = _openAIClient.GetChatClient(_openAIDeploymentName);
         IsConfigured = true;
         _logger.LogInformation("Azure OpenAI client initialized with endpoint: {Endpoint}", openAIEndpoint);
+    }
+
+    private static string ResolveConfigValue(params string?[] values)
+    {
+        foreach (var value in values)
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                return value;
+            }
+        }
+
+        return string.Empty;
     }
 
     public async Task<string> GenerateDebateTurnAsync(string prompt, int maxTokens, CancellationToken cancellationToken)

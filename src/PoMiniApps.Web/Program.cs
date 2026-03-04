@@ -66,16 +66,68 @@ try
         }
     });
 
-    // ── Key Vault (production, not in Development) ───────────────────────
-    // In Development, we use local appsettings.Development.json with Azurite
-    // In Production/Azure, we use Key Vault for secrets management
-    if (!builder.Environment.IsDevelopment())
+    // ── Key Vault ────────────────────────────────────────────────────────
+    // Load Key Vault for AI services (OpenAI, Speech) in all environments
+    builder.Configuration.AddPoLingualKeyVault(builder.Configuration);
+
+    // In Development, reload local appsettings.Development.json AFTER Key Vault
+    // so that local storage connection string overrides the production one from Key Vault
+    if (builder.Environment.IsDevelopment())
     {
-        builder.Configuration.AddPoLingualKeyVault(builder.Configuration);
+        builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
     }
 
     // ── Configuration binding ────────────────────────────────────────────
-    builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("Azure"));
+    var configuration = builder.Configuration;
+
+    static string ResolveConfigValue(params string?[] values)
+    {
+        foreach (var value in values)
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                return value;
+            }
+        }
+
+        return string.Empty;
+    }
+
+    builder.Services.Configure<ApiSettings>(options =>
+    {
+        configuration.GetSection("ApiSettings").Bind(options);
+
+        options.AzureOpenAIEndpoint = ResolveConfigValue(
+            configuration["Azure:OpenAI:Endpoint"],
+            configuration["AzureOpenAI:Endpoint"],
+            configuration["Azure:AzureOpenAIEndpoint"],
+            options.AzureOpenAIEndpoint);
+
+        options.AzureOpenAIDeploymentName = ResolveConfigValue(
+            configuration["Azure:OpenAI:DeploymentName"],
+            configuration["AzureOpenAI:DeploymentName"],
+            configuration["Azure:AzureOpenAIDeploymentName"],
+            options.AzureOpenAIDeploymentName,
+            "gpt-4o");
+
+        options.AzureOpenAIApiKey = ResolveConfigValue(
+            configuration["Azure:OpenAI:ApiKey"],
+            configuration["AzureOpenAI:ApiKey"],
+            configuration["Azure:AzureOpenAIApiKey"],
+            options.AzureOpenAIApiKey);
+
+        options.AzureSpeechSubscriptionKey = ResolveConfigValue(
+            configuration["Azure:Speech:SubscriptionKey"],
+            configuration["AzureSpeech:SubscriptionKey"],
+            configuration["Azure:AzureSpeechSubscriptionKey"],
+            options.AzureSpeechSubscriptionKey);
+
+        options.AzureSpeechRegion = ResolveConfigValue(
+            configuration["Azure:Speech:Region"],
+            configuration["AzureSpeech:Region"],
+            configuration["Azure:AzureSpeechRegion"],
+            options.AzureSpeechRegion);
+    });
 
     // ── Blazor ───────────────────────────────────────────────────────────
     builder.Services.AddRazorComponents()

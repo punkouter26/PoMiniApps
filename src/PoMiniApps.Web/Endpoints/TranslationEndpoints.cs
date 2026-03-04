@@ -23,7 +23,19 @@ public static class TranslationEndpoints
                 return Results.BadRequest(new { errors = validation.Errors.Select(e => e.ErrorMessage) });
 
             var stopwatch = Stopwatch.StartNew();
-            var translated = await translationService.TranslateToVictorianEnglishAsync(request.Text);
+            string translated;
+            try
+            {
+                translated = await translationService.TranslateToVictorianEnglishAsync(request.Text);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Results.Problem(
+                    detail: ex.Message,
+                    title: "Translation service unavailable",
+                    statusCode: StatusCodes.Status503ServiceUnavailable);
+            }
+
             stopwatch.Stop();
 
             metrics.RecordTranslationRequested(stopwatch.ElapsedMilliseconds);
