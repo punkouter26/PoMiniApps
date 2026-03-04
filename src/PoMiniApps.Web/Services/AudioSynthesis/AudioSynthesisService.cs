@@ -10,10 +10,10 @@ namespace PoMiniApps.Web.Services.AudioSynthesis;
 /// Azure Speech REST API implementation for audio synthesis.
 /// Used by the Translation feature for Victorian English TTS.
 /// </summary>
-public sealed class AudioSynthesisService : IAudioSynthesisService
+public class AudioSynthesisService
 {
     private readonly ApiSettings _settings;
-    private readonly ISpeechConfigValidator _configValidator;
+    private readonly SpeechConfigValidator _configValidator;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<AudioSynthesisService> _logger;
     private readonly TimeProvider _timeProvider;
@@ -21,7 +21,7 @@ public sealed class AudioSynthesisService : IAudioSynthesisService
     private DateTimeOffset _tokenExpiry = DateTimeOffset.MinValue;
     private const string VoiceName = "en-GB-RyanNeural";
 
-    public AudioSynthesisService(IOptions<ApiSettings> apiSettings, ISpeechConfigValidator configValidator,
+    public AudioSynthesisService(IOptions<ApiSettings> apiSettings, SpeechConfigValidator configValidator,
         IHttpClientFactory httpClientFactory, ILogger<AudioSynthesisService> logger, TimeProvider timeProvider)
     {
         _settings = apiSettings.Value;
@@ -46,7 +46,7 @@ public sealed class AudioSynthesisService : IAudioSynthesisService
         return _accessToken;
     }
 
-    public async Task<byte[]> SynthesizeSpeechAsync(string text, CancellationToken cancellationToken = default)
+    public virtual async Task<byte[]> SynthesizeSpeechAsync(string text, CancellationToken cancellationToken = default)
     {
         if (!_configValidator.IsValid(_settings))
             throw new InvalidOperationException($"Azure Speech not configured: {_configValidator.GetValidationError(_settings)}");
@@ -60,7 +60,7 @@ public sealed class AudioSynthesisService : IAudioSynthesisService
         using var request = new HttpRequestMessage(HttpMethod.Post, ttsEndpoint);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         request.Headers.Add("X-Microsoft-OutputFormat", "audio-16khz-32kbitrate-mono-mp3");
-        request.Headers.Add("User-Agent", "PoLingual");
+        request.Headers.Add("User-Agent", "PoMiniGames");
         request.Content = new StringContent(ssml, Encoding.UTF8, "application/ssml+xml");
 
         var response = await client.SendAsync(request, cancellationToken);

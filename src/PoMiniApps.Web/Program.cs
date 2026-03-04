@@ -9,8 +9,6 @@ using PoMiniApps.Web.Middleware;
 using PoMiniApps.Web.Services.AI;
 using PoMiniApps.Web.Services.AudioSynthesis;
 using PoMiniApps.Web.Services.Data;
-using PoMiniApps.Web.Services.Diagnostics;
-using PoMiniApps.Web.Services.Factories;
 using PoMiniApps.Web.Services.Lyrics;
 using PoMiniApps.Web.Services.News;
 using PoMiniApps.Web.Services.Orchestration;
@@ -68,7 +66,7 @@ try
 
     // ── Key Vault ────────────────────────────────────────────────────────
     // Load Key Vault for AI services (OpenAI, Speech) in all environments
-    builder.Configuration.AddPoLingualKeyVault(builder.Configuration);
+    builder.Configuration.AddPoMiniGamesKeyVault(builder.Configuration);
 
     // In Development, reload local appsettings.Development.json AFTER Key Vault
     // so that local storage connection string overrides the production one from Key Vault
@@ -137,12 +135,11 @@ try
     // ── SignalR ──────────────────────────────────────────────────────────
     builder.Services.AddSignalR();
 
-    // ── OpenAPI / Swagger ────────────────────────────────────────────────
+    // ── OpenAPI ──────────────────────────────────────────────────────────
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
 
     // ── HTTP Clients ─────────────────────────────────────────────────────
-    builder.Services.AddPoLingualHttpClients();
+    builder.Services.AddPoMiniGamesHttpClients();
 
     // ── Core Services ────────────────────────────────────────────────────
     builder.Services.AddSingleton(TimeProvider.System);
@@ -151,34 +148,29 @@ try
     builder.Services.AddScoped<ITextToSpeechService, TextToSpeechService>();
     builder.Services.AddScoped<ITableStorageService, TableStorageService>();
     builder.Services.AddScoped<IRapperRepository, RapperRepository>();
-    builder.Services.AddScoped<INewsService, NewsService>();
+    builder.Services.AddScoped<NewsService>();
     builder.Services.AddScoped<ITranslationService, TranslationService>();
-    builder.Services.AddSingleton<ITranslationCache, TranslationCache>();
-    builder.Services.AddScoped<ILyricsService, LyricsService>();
-    builder.Services.AddScoped<IAudioSynthesisService, AudioSynthesisService>();
-    builder.Services.AddScoped<IDiagnosticsService, DiagnosticsService>();
+    builder.Services.AddSingleton<TranslationCache>();
+    builder.Services.AddScoped<LyricsService>();
+    builder.Services.AddScoped<AudioSynthesisService>();
 
     // ── Orchestration (Singleton — manages debate lifecycle) ─────────────
-    builder.Services.AddSingleton<IDebateServiceFactory, DebateServiceFactory>();
     builder.Services.AddSingleton<IDebateOrchestrator, DebateOrchestrator>();
 
     // ── Validators ───────────────────────────────────────────────────────
-    builder.Services.AddScoped<IInputValidator, InputValidator>();
-    builder.Services.AddScoped<ISpeechConfigValidator, SpeechConfigValidator>();
+    builder.Services.AddScoped<SpeechConfigValidator>();
     builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
     // ── Telemetry ────────────────────────────────────────────────────────
     builder.Services.AddSingleton<DebateMetrics>();
-    builder.Services.AddPoLingualOpenTelemetry(builder.Configuration);
+    builder.Services.AddPoMiniGamesOpenTelemetry(builder.Configuration);
 
     // ── Health Checks ────────────────────────────────────────────────────
     builder.Services.AddHealthChecks()
         .AddCheck<AzureOpenAIHealthCheck>("Azure OpenAI")
         .AddCheck<AzureTableStorageHealthCheck>("Azure Table Storage")
         .AddCheck<TextToSpeechHealthCheck>("TTS (Speech SDK)")
-        .AddCheck<AzureSpeechRestHealthCheck>("Azure Speech REST")
-        .AddCheck<NewsApiHealthCheck>("NewsAPI")
-        .AddCheck<InternetConnectivityHealthCheck>("Internet Connectivity");
+        .AddCheck<AzureSpeechRestHealthCheck>("Azure Speech REST");
 
     // ── Exception Handler ────────────────────────────────────────────────
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -204,7 +196,6 @@ try
     if (app.Environment.IsDevelopment())
     {
         app.UseWebAssemblyDebugging();
-        app.UseSwagger();
         app.MapScalarApiReference(options =>
         {
             options.Title = "PoMiniApps API";
@@ -220,7 +211,6 @@ try
     // ── Minimal API endpoints ────────────────────────────────────────────
     app.MapRapperEndpoints();
     app.MapTopicEndpoints();
-    app.MapNewsEndpoints();
     app.MapTranslationEndpoints();
     app.MapLyricsEndpoints();
     app.MapSpeechEndpoints();

@@ -21,7 +21,7 @@ public static class DebateStateFactory
     public static DebateState CreateForNewDebate(Rapper rapper1, Rapper rapper2, Topic topic, int maxTurns)
     {
         int totalRounds = maxTurns / 2;
-        string introText = $"Let the battle begin! {rapper1.Name} vs {rapper2.Name} on '{topic.Title}'. {totalRounds} rounds. Let's go!";
+        // Intro is shown separately in the UI, not as a turn
         return new DebateState
         {
             Rapper1 = rapper1,
@@ -31,7 +31,7 @@ public static class DebateStateFactory
             CurrentTurn = 0,
             IsRapper1Turn = true,
             DebateTranscript = new StringBuilder(),
-            CurrentTurnText = introText,
+            CurrentTurnText = string.Empty,
             ErrorMessage = string.Empty
         };
     }

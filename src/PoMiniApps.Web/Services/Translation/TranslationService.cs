@@ -11,10 +11,10 @@ namespace PoMiniApps.Web.Services.Translation;
 /// Translates modern English to Victorian-era English using Azure OpenAI.
 /// Includes caching for cost optimization.
 /// </summary>
-public sealed class TranslationService : ITranslationService
+public class TranslationService : ITranslationService
 {
     private readonly ChatClient? _chatClient;
-    private readonly ITranslationCache _cache;
+    private readonly TranslationCache _cache;
     private readonly ILogger<TranslationService> _logger;
     private readonly bool _isConfigured;
     private const int MaxTokens = 500;
@@ -24,7 +24,7 @@ public sealed class TranslationService : ITranslationService
         Output only the translated text, no explanations.
         """;
 
-    public TranslationService(IOptions<ApiSettings> apiSettings, ITranslationCache cache, ILogger<TranslationService> logger)
+    public TranslationService(IOptions<ApiSettings> apiSettings, TranslationCache cache, ILogger<TranslationService> logger)
     {
         _cache = cache;
         _logger = logger;

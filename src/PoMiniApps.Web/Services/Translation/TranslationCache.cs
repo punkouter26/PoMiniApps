@@ -5,7 +5,7 @@ namespace PoMiniApps.Web.Services.Translation;
 /// <summary>
 /// In-memory cache for translation results to reduce OpenAI API costs.
 /// </summary>
-public sealed class TranslationCache : ITranslationCache
+public class TranslationCache
 {
     private readonly IMemoryCache _cache;
     private readonly ILogger<TranslationCache> _logger;

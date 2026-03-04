@@ -1,6 +1,6 @@
 namespace PoMiniApps.Web.Validators;
 
-public class InputValidator : IInputValidator
+public class InputValidator
 {
     private const int MaxTranslationLength = 5000;
     private const int MaxSongTitleLength = 200;

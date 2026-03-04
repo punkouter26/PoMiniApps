@@ -2,7 +2,7 @@ using PoMiniApps.Web.Configuration;
 
 namespace PoMiniApps.Web.Validators;
 
-public class SpeechConfigValidator : ISpeechConfigValidator
+public class SpeechConfigValidator
 {
     public bool IsValid(ApiSettings settings) =>
         !string.IsNullOrWhiteSpace(settings.AzureSpeechSubscriptionKey) &&

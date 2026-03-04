@@ -54,3 +54,5 @@ desktop.ini
 .idea/
 *.swp
 *.swo
+# Po-Tune state (local IDE tooling only)
+.potune-state.json

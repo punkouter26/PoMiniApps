@@ -8,7 +8,7 @@ namespace PoMiniApps.Web.Extensions;
 /// </summary>
 public static class KeyVaultConfigurationExtensions
 {
-    public static IConfigurationBuilder AddPoLingualKeyVault(this IConfigurationBuilder builder, IConfiguration currentConfig)
+    public static IConfigurationBuilder AddPoMiniGamesKeyVault(this IConfigurationBuilder builder, IConfiguration currentConfig)
     {
         var keyVaultName =
             currentConfig["PoMiniApps:Azure:KeyVault:Name"]

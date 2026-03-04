@@ -1,6 +1,6 @@
-# PoMiniApps — Collection of Mini Applications
+# PoMiniApps — .NET 10 Mini Applications Framework
 
-A collection of small .NET 10 applications built with Blazor WebAssembly, showcasing various features and technologies with clear separation between apps.
+A modular .NET 10 application framework that demonstrates a collection of mini applications ("MiniApps") built with Blazor, showcasing various Azure services and clean architecture patterns with clear boundaries between features.
 
 ## 🏗️ Architecture
 
@@ -40,7 +40,7 @@ tests/
 
 ### 🎤 Lingual Playground
 
-A language-focused mini app with two main features:
+The Lingual Playground is a mini app demonstrating real-time interactivity and AI integration with two main features:
 
 **Rap Battle Arena**
 - AI-generated rap debates between famous rappers (Azure OpenAI GPT-4o)
@@ -54,6 +54,34 @@ A language-focused mini app with two main features:
 - Song lyrics library for demos
 - British Victorian voice text-to-speech
 - Translation caching for performance
+
+## 🧪 Testing Architecture
+
+Tests are organized by type and feature for maintainability:
+
+```
+tests/
+  PoMiniApps.TestShared/             # Shared test utilities and factories
+    ├── Factories/                   # Mock factories
+    ├── Builders/                    # Test data builders
+    ├── Assertions/                  # Custom assertion helpers
+    └── Utilities/                   # Test configuration
+  PoMiniApps.UnitTests/              # Unit tests (pure logic)
+  PoMiniApps.IntegrationTests/       # Integration tests (API/DB)
+  PoMiniApps.E2ETests/
+    └── tests/
+        └── features/                # Organized by feature
+            ├── home/
+            ├── rap-battle/
+            ├── translator/
+            └── diagnostics/
+```
+
+### Test Strategy
+- **Unit Tests**: Test individual services and domain logic
+- **Integration Tests**: Test API endpoints and database interactions (uses TestContainers)
+- **E2E Tests**: Test critical user flows with Playwright (organized by feature)
+- **Shared Utilities**: Common mock factories and test helpers in `PoMiniApps.TestShared`
 
 ## 🎮 Adding New Mini Apps
 
@@ -162,7 +190,10 @@ Navigate to `https://localhost:7199`
 ### 4. Run Tests
 
 ```bash
-# Unit tests
+# Run all tests with coverage
+./run-tests-with-coverage.ps1
+
+# Unit tests only
 dotnet test tests/PoMiniApps.UnitTests
 
 # Integration tests (requires Azurite)
@@ -174,6 +205,8 @@ npm install
 npx playwright install
 npm test
 ```
+
+**Coverage Reports**: Run `./run-tests-with-coverage.ps1` to generate HTML coverage reports in the `coverage/` directory. See [COVERAGE_GUIDE.md](COVERAGE_GUIDE.md) for details.
 
 ## API Endpoints
 

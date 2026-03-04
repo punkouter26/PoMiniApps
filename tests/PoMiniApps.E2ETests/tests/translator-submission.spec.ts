@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { attachClientErrorCapture } from '../helpers/client-error-capture';
 
 test.describe('Translator Full Submission Flow', () => {
     test('should navigate to translator page successfully', async ({ page }) => {
@@ -29,11 +30,7 @@ test.describe('Translator Full Submission Flow', () => {
     });
 
     test('should display translator page without JavaScript errors', async ({ page }) => {
-        const errors: string[] = [];
-
-        page.on('pageerror', (error) => {
-            errors.push(error.message);
-        });
+        const clientErrors = attachClientErrorCapture(page);
 
         await page.goto('/apps/lingual/victorian-translator');
         await page.waitForLoadState('networkidle');
@@ -42,7 +39,7 @@ test.describe('Translator Full Submission Flow', () => {
         await expect(page.getByRole('heading', { name: /Victorian English Translator/i })).toBeVisible();
 
         // No unhandled JavaScript errors
-        expect(errors).toEqual([]);
+        expect(clientErrors).toEqual([]);
     });
 });
 

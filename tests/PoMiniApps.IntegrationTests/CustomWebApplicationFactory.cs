@@ -36,15 +36,15 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         {
             services.RemoveAll<IAzureOpenAIService>();
             services.RemoveAll<ITranslationService>();
-            services.RemoveAll<IAudioSynthesisService>();
-            services.RemoveAll<INewsService>();
-            services.RemoveAll<ILyricsService>();
+            services.RemoveAll<AudioSynthesisService>();
+            services.RemoveAll<NewsService>();
+            services.RemoveAll<LyricsService>();
 
             services.AddSingleton<IAzureOpenAIService, FakeAzureOpenAIService>();
             services.AddSingleton<ITranslationService, FakeTranslationService>();
-            services.AddSingleton<IAudioSynthesisService, FakeAudioSynthesisService>();
-            services.AddSingleton<INewsService, FakeNewsService>();
-            services.AddSingleton<ILyricsService, FakeLyricsService>();
+            services.AddSingleton<AudioSynthesisService, FakeAudioSynthesisService>();
+            services.AddSingleton<NewsService, FakeNewsService>();
+            services.AddSingleton<LyricsService, FakeLyricsService>();
         });
     }
 
@@ -70,15 +70,17 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             => Task.FromResult($"Victorian::{modernText}");
     }
 
-    private sealed class FakeAudioSynthesisService : IAudioSynthesisService
+    private sealed class FakeAudioSynthesisService : AudioSynthesisService
     {
-        public Task<byte[]> SynthesizeSpeechAsync(string text, CancellationToken cancellationToken = default)
+        public FakeAudioSynthesisService() : base(null!, null!, null!, null!, TimeProvider.System) { }
+        public override Task<byte[]> SynthesizeSpeechAsync(string text, CancellationToken cancellationToken = default)
             => Task.FromResult(new byte[] { 1, 2, 3, 4 });
     }
 
-    private sealed class FakeNewsService : INewsService
+    private sealed class FakeNewsService : NewsService
     {
-        public Task<List<NewsHeadline>> GetTopHeadlinesAsync(int count)
+        public FakeNewsService() : base(null!, null!, null!) { }
+        public override Task<List<NewsHeadline>> GetTopHeadlinesAsync(int count)
             => Task.FromResult(new List<NewsHeadline>
             {
                 new()
@@ -89,15 +91,16 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             });
     }
 
-    private sealed class FakeLyricsService : ILyricsService
+    private sealed class FakeLyricsService : LyricsService
     {
-        public Task<List<string>> GetAvailableSongsAsync(CancellationToken cancellationToken = default)
+        public FakeLyricsService() : base(null!, null!) { }
+        public override Task<List<string>> GetAvailableSongsAsync(CancellationToken cancellationToken = default)
             => Task.FromResult(new List<string> { "mock-song" });
 
-        public Task<string?> GetLyricsAsync(string songTitle, CancellationToken cancellationToken = default)
+        public override Task<string?> GetLyricsAsync(string songTitle, CancellationToken cancellationToken = default)
             => Task.FromResult<string?>($"lyrics::{songTitle}");
 
-        public Task<(string? Title, string? Lyrics)> GetRandomLyricsAsync(CancellationToken cancellationToken = default)
+        public override Task<(string? Title, string? Lyrics)> GetRandomLyricsAsync(CancellationToken cancellationToken = default)
             => Task.FromResult<(string? Title, string? Lyrics)>(("mock-song", "lyrics::mock-song"));
     }
 }

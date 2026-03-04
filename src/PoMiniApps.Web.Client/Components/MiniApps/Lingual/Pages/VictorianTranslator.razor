@@ -13,51 +13,110 @@
         <h2 class="victorian-title">🎩 Victorian English Translator</h2>
     </div>
 
-    <RadzenCard class="rz-mb-4" Style="max-width: 900px;">
-        <RadzenStack Gap="1rem">
-            <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem" AlignItems="AlignItems.End">
-                <RadzenButton Text="Random Lyrics" Icon="shuffle" Click="@LoadRandomLyrics"
-                              ButtonStyle="ButtonStyle.Secondary" Disabled="@_isTranslating" />
-                @if (_availableSongs is not null)
+    <RadzenCard class="setup-card" Style="max-width: 900px;">
+        <RadzenStack Gap="1.5rem">
+            <RadzenText TextStyle="TextStyle.H5">Transform Modern English into Victorian Prose</RadzenText>
+
+            <RadzenFormField Text="Enter text to translate" Style="width: 100%;">
+                <ChildContent>
+                    <RadzenTextArea @bind-Value="@_inputText" Rows="6"
+                                    Placeholder="Enter modern English text (e.g., 'hey, what's up?') or use Quick Fill below..."
+                                    Style="width: 100%;" Disabled="@_isTranslating" />
+                </ChildContent>
+                <Helper>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+                        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center">
+                            <span style="color: var(--rz-text-secondary-color); font-size: 0.85rem;">Quick Fill:</span>
+                            <RadzenButton Text="🎲 Random" Size="ButtonSize.ExtraSmall" ButtonStyle="ButtonStyle.Light"
+                                          Variant="Variant.Outlined" Click="@LoadRandomLyrics" Disabled="@_isTranslating" />
+                            @if (_availableSongs is not null && _availableSongs.Count > 0)
+                            {
+                                <RadzenDropDown @bind-Value="@_selectedSong" Data="@_availableSongs"
+                                                Placeholder="or choose song..." Size="ButtonSize.ExtraSmall"
+                                                Style="width: 180px; font-size: 0.85rem;" Change="@OnSongSelected"
+                                                Disabled="@_isTranslating" />
+                            }
+                        </RadzenStack>
+                        <span style="color: var(--rz-text-secondary-color); font-size: 0.85rem;">@_inputText.Length
+                            characters</span>
+                        </div>
+                    </Helper>
+                </RadzenFormField>
+
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem" AlignItems="AlignItems.Center"
+                             Wrap="FlexWrap.Wrap">
+                    <RadzenButton Text="✨ Translate to Victorian" Icon="translate" Click="@TranslateAsync"
+                                  ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large" IsBusy="@_isTranslating"
+                                  Disabled="@(string.IsNullOrWhiteSpace(_inputText) || _isTranslating)"
+                                  Style="flex: 1; min-width: 200px;" />
+                    @if (_translationTimeMs > 0)
+                    {
+                        <RadzenText TextStyle="TextStyle.Caption" class="text-muted">⏱️ Translated in @_translationTimeMs ms
+                        </RadzenText>
+                    }
+                </RadzenStack>
+
+                @if (!string.IsNullOrWhiteSpace(_errorMessage))
                 {
-                    <RadzenDropDown @bind-Value="@_selectedSong" Data="@_availableSongs" Placeholder="Pick a song..."
-                                    Style="width: 300px;" Change="@OnSongSelected" Disabled="@_isTranslating" />
+                    <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter"
+                                 Color="AlertColor.Danger">
+                        <strong>⚠️ Translation Error:</strong> @_errorMessage
+                        <div style="margin-top: 0.5rem;">
+                            <RadzenButton Text="Try Again" Click="@TranslateAsync" ButtonStyle="ButtonStyle.Secondary"
+                                          Size="ButtonSize.Small" />
+                        </div>
+                    </RadzenAlert>
+                }
+
+                @if (_isTranslating)
+                {
+                    <div class="progress-indicator">
+                        <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate"
+                                                   Size="ProgressBarCircularSize.Small" />
+                        <span>Transforming to Victorian prose...</span>
+                    </div>
                 }
             </RadzenStack>
+        </RadzenCard>
 
-            <RadzenTextArea @bind-Value="@_inputText" Rows="6" Placeholder="Enter modern English text to translate..."
-                            Style="width: 100%;" Disabled="@_isTranslating" />
+        @if (!string.IsNullOrWhiteSpace(_translatedText))
+        {
+            <RadzenCard class="setup-card" Style="max-width: 900px; margin-top: 2rem;">
+                <RadzenStack Gap="1.5rem">
+                    <div>
+                        <RadzenText TextStyle="TextStyle.H5" style="margin-bottom: 1rem;">📜 Victorian Translation</RadzenText>
+                        <div
+                            style="background: rgba(0, 0, 0, 0.2); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--secondary-color);">
+                            <RadzenText
+                                Style="white-space: pre-wrap; font-style: italic; line-height: 1.8; color: var(--text-secondary);">
+                                @_translatedText</RadzenText>
+                            </div>
+                        </div>
 
-            <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem" AlignItems="AlignItems.Center">
-                <RadzenButton Text="Translate to Victorian" Icon="translate" Click="@TranslateAsync"
-                              ButtonStyle="ButtonStyle.Primary" IsBusy="@_isTranslating"
-                              Disabled="@(string.IsNullOrWhiteSpace(_inputText) || _isTranslating)" />
-                @if (_translationTimeMs > 0)
-                {
-                    <RadzenText TextStyle="TextStyle.Caption">Translated in @_translationTimeMs ms</RadzenText>
-                }
-            </RadzenStack>
+                        <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem" Wrap="FlexWrap.Wrap">
+                            <RadzenButton Text="🔊 Hear It in British Accent" Icon="volume_up" Click="@SynthesizeSpeechAsync"
+                                          ButtonStyle="ButtonStyle.Info" Size="ButtonSize.Large" IsBusy="@_isSynthesizing"
+                                          Disabled="@_isSynthesizing" Style="flex: 1; min-width: 200px;" />
+                            <RadzenButton Text="📋 Copy to Clipboard" Icon="content_copy" ButtonStyle="ButtonStyle.Secondary"
+                                          Size="ButtonSize.Large" Style="flex: 1; min-width: 200px;" />
+                        </RadzenStack>
 
-            @if (!string.IsNullOrWhiteSpace(_errorMessage))
-            {
-                <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter">
-                    @_errorMessage
-                </RadzenAlert>
-            }
+                        @if (_isSynthesizing)
+                        {
+                            <div class="progress-indicator">
+                                <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate"
+                                                           Size="ProgressBarCircularSize.Small" />
+                                <span>Generating speech with British accent...</span>
+                            </div>
+                        }
 
-            @if (!string.IsNullOrWhiteSpace(_translatedText))
-            {
-                <RadzenCard Variant="Variant.Outlined">
-                    <RadzenText TextStyle="TextStyle.Subtitle1" class="rz-mb-2">📜 Victorian Translation:</RadzenText>
-                    <RadzenText Style="white-space: pre-wrap; font-style: italic;">@_translatedText</RadzenText>
+                        <RadzenButton Text="Translate Another" Icon="repeat" ButtonStyle="ButtonStyle.Light"
+                                      Variant="Variant.Outlined" Click="@ResetTranslation" Style="width: 100%;" />
+                    </RadzenStack>
                 </RadzenCard>
-
-                <RadzenButton Text="🔊 Listen" Icon="volume_up" Click="@SynthesizeSpeechAsync"
-                              ButtonStyle="ButtonStyle.Info" IsBusy="@_isSynthesizing" Disabled="@_isSynthesizing" />
             }
-        </RadzenStack>
-    </RadzenCard>
-</div>
+        </div>
 
 @code {
     private string _inputText = "";
@@ -84,7 +143,7 @@
                 var result = await Http.GetFromJsonAsync<LyricsResult>($"/api/lyrics/{Uri.EscapeDataString(song)}");
                 if (result?.Lyrics is not null) _inputText = result.Lyrics;
             }
-            catch { _errorMessage = "Failed to load song lyrics."; }
+            catch { _errorMessage = "Failed to load song lyrics. Please try again."; }
         }
     }
 
@@ -99,7 +158,7 @@
                 _selectedSong = result.Title;
             }
         }
-        catch { _errorMessage = "Failed to load random lyrics."; }
+        catch { _errorMessage = "Failed to load random lyrics. Check your connection and try again."; }
     }
 
     private async Task TranslateAsync()
@@ -120,10 +179,10 @@
             else
             {
                 var error = await response.Content.ReadAsStringAsync();
-                _errorMessage = $"Translation failed: {error}";
+                _errorMessage = $"Translation failed. Please try again with shorter text.";
             }
         }
-        catch (Exception ex) { _errorMessage = $"Error: {ex.Message}"; }
+        catch (Exception ex) { _errorMessage = $"Connection error: {ex.Message}. Please check your internet."; }
         finally { _isTranslating = false; }
     }
 
@@ -139,10 +198,18 @@
                 var base64 = Convert.ToBase64String(audioBytes);
                 // Audio playback handled by JS interop would go here
             }
-            else _errorMessage = "Speech synthesis failed.";
+            else _errorMessage = "Speech synthesis failed. Please try again.";
         }
         catch (Exception ex) { _errorMessage = $"Speech error: {ex.Message}"; }
         finally { _isSynthesizing = false; }
+    }
+
+    private void ResetTranslation()
+    {
+        _inputText = "";
+        _translatedText = "";
+        _errorMessage = "";
+        _translationTimeMs = 0;
     }
 
     private record TranslationResult(string TranslatedText, long DurationMs);

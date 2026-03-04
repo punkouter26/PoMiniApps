@@ -45,7 +45,6 @@
 
     <!-- API Documentation -->
     <PackageReference Include="Scalar.AspNetCore" />
-    <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>
 
   <ItemGroup>

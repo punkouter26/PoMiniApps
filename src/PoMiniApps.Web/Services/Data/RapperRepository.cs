@@ -6,26 +6,18 @@ namespace PoMiniApps.Web.Services.Data;
 /// <summary>
 /// Repository Pattern for Rapper entities in Azure Table Storage.
 /// </summary>
-public class RapperRepository : IRapperRepository
+public class RapperRepository(ITableStorageService tableStorageService, ILogger<RapperRepository> logger) : IRapperRepository
 {
-    private const string TableName = "PoLingualRappers";
-    private readonly ITableStorageService _tableStorageService;
-    private readonly ILogger<RapperRepository> _logger;
-
-    public RapperRepository(ITableStorageService tableStorageService, ILogger<RapperRepository> logger)
-    {
-        _tableStorageService = tableStorageService;
-        _logger = logger;
-    }
+    private const string TableName = "PoMiniGamesRappers";
 
     public async Task<List<Rapper>> GetAllRappersAsync()
     {
         var rappers = new List<Rapper>();
-        await foreach (var entity in _tableStorageService.GetEntitiesAsync<RapperEntity>(TableName))
+        await foreach (var entity in tableStorageService.GetEntitiesAsync<RapperEntity>(TableName))
         {
             rappers.Add(new Rapper { Name = entity.RowKey, Wins = entity.Wins, Losses = entity.Losses });
         }
-        _logger.LogInformation("Retrieved {Count} rappers from Table Storage", rappers.Count);
+        logger.LogInformation("Retrieved {Count} rappers from Table Storage", rappers.Count);
         return rappers;
     }
 
@@ -36,11 +28,11 @@ public class RapperRepository : IRapperRepository
             var existing = await GetAllRappersAsync();
             if (existing.Count > 0)
             {
-                _logger.LogInformation("Rappers already exist. Skipping seeding.");
+                logger.LogInformation("Rappers already exist. Skipping seeding.");
                 return;
             }
 
-            _logger.LogInformation("Seeding initial rappers...");
+            logger.LogInformation("Seeding initial rappers...");
             var rappers = new[] { "Eminem", "Kendrick Lamar", "Tupac Shakur", "The Notorious B.I.G.", "Nas",
                                   "Jay-Z", "Rakim", "Andre 3000", "Lauryn Hill", "Snoop Dogg" };
 
@@ -49,39 +41,39 @@ public class RapperRepository : IRapperRepository
             {
                 try
                 {
-                    await _tableStorageService.UpsertEntityAsync(TableName, new RapperEntity(TableName, name));
+                    await tableStorageService.UpsertEntityAsync(TableName, new RapperEntity(TableName, name));
                     successful++;
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogWarning(ex, "Failed to seed rapper {RapperName}", name);
+                    logger.LogWarning(ex, "Failed to seed rapper {RapperName}", name);
                 }
             }
 
-            _logger.LogInformation("Rapper seeding completed: {SuccessfulCount}/{TotalCount} rappers seeded", successful, rappers.Length);
+            logger.LogInformation("Rapper seeding completed: {SuccessfulCount}/{TotalCount} rappers seeded", successful, rappers.Length);
 
             if (successful == 0)
             {
-                _logger.LogWarning("No rappers were successfully seeded. Service may not be fully operational.");
+                logger.LogWarning("No rappers were successfully seeded. Service may not be fully operational.");
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error during rapper seeding");
+            logger.LogError(ex, "Unexpected error during rapper seeding");
         }
     }
 
     public async Task UpdateWinLossRecordAsync(string winnerName, string loserName)
     {
-        _logger.LogInformation("Updating record: winner={Winner}, loser={Loser}", winnerName, loserName);
+        logger.LogInformation("Updating record: winner={Winner}, loser={Loser}", winnerName, loserName);
 
-        var winner = await _tableStorageService.GetEntityAsync<RapperEntity>(TableName, TableName, winnerName);
-        if (winner != null) { winner.Wins++; await _tableStorageService.UpsertEntityAsync(TableName, winner); }
-        else await _tableStorageService.UpsertEntityAsync(TableName, new RapperEntity(TableName, winnerName) { Wins = 1 });
+        var winner = await tableStorageService.GetEntityAsync<RapperEntity>(TableName, TableName, winnerName);
+        if (winner != null) { winner.Wins++; await tableStorageService.UpsertEntityAsync(TableName, winner); }
+        else await tableStorageService.UpsertEntityAsync(TableName, new RapperEntity(TableName, winnerName) { Wins = 1 });
 
-        var loser = await _tableStorageService.GetEntityAsync<RapperEntity>(TableName, TableName, loserName);
-        if (loser != null) { loser.Losses++; await _tableStorageService.UpsertEntityAsync(TableName, loser); }
-        else await _tableStorageService.UpsertEntityAsync(TableName, new RapperEntity(TableName, loserName) { Losses = 1 });
+        var loser = await tableStorageService.GetEntityAsync<RapperEntity>(TableName, TableName, loserName);
+        if (loser != null) { loser.Losses++; await tableStorageService.UpsertEntityAsync(TableName, loser); }
+        else await tableStorageService.UpsertEntityAsync(TableName, new RapperEntity(TableName, loserName) { Losses = 1 });
     }
 
     /// <summary>Table entity for internal storage representation.</summary>

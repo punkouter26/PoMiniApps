@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -8,13 +9,13 @@ namespace PoMiniApps.UnitTests.Services;
 
 public class TranslationServiceTests
 {
-    private readonly Mock<ITranslationCache> _cacheMock;
+    private readonly Mock<TranslationCache> _cacheMock;
     private readonly Mock<ILogger<TranslationService>> _loggerMock;
     private readonly Mock<IOptions<ApiSettings>> _optionsMock;
 
     public TranslationServiceTests()
     {
-        _cacheMock = new Mock<ITranslationCache>();
+        _cacheMock = new Mock<TranslationCache>(MockBehavior.Loose, new object[] { Mock.Of<IMemoryCache>(), Mock.Of<ILogger<TranslationCache>>() });
         _loggerMock = new Mock<ILogger<TranslationService>>();
         _optionsMock = new Mock<IOptions<ApiSettings>>();
     }

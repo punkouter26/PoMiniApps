@@ -17,7 +17,8 @@
     <div class="apps-grid">
         @foreach (var app in MiniApps.All)
         {
-            <RadzenCard class="app-card" @onclick="() => Navigation.NavigateTo(app.Route)">
+            <RadzenCard class="app-card" @onclick="() => Navigation.NavigateTo(app.Route)" 
+                       style="cursor: pointer; position: relative;">
                 <RadzenStack Gap="1rem">
                     <div class="app-icon" style="background: @app.Color">@app.Icon</div>
                     <RadzenStack Gap="0.5rem">
@@ -32,19 +33,13 @@
                             <RadzenBadge Text="@tag" Variant="Variant.Outlined" IsPill="true" />
                         }
                     </div>
-                    <RadzenButton Text="Launch" Icon="arrow_forward" ButtonStyle="ButtonStyle.Primary"
-                                  Style="align-self: flex-start; margin-top: auto;" />
+                    <div style="margin-top: auto; display: flex; align-items: center; gap: 0.5rem; color: rgba(255,255,255,0.6); font-size: 0.9rem;">
+                        <span>Launch App</span>
+                        <span style="font-size: 1.2rem;">→</span>
+                    </div>
                 </RadzenStack>
             </RadzenCard>
         }
-    </div>
-
-    <div class="utilities-section">
-        <RadzenText TextStyle="TextStyle.H6" Style="margin-bottom: 1rem;">Utilities</RadzenText>
-        <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem" Wrap="FlexWrap.Wrap">
-            <RadzenButton Text="🔧 Diagnostics" Click='() => Navigation.NavigateTo("/diagnostics")'
-                          ButtonStyle="ButtonStyle.Light" Variant="Variant.Outlined" />
-        </RadzenStack>
     </div>
 </div>
 
@@ -134,12 +129,6 @@
         display: flex;
         gap: 0.5rem;
         flex-wrap: wrap;
-    }
-
-    .utilities-section {
-        margin-top: 4rem;
-        padding-top: 2rem;
-        border-top: 1px solid var(--rz-base-300);
     }
 </style>
 

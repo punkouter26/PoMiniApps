@@ -7,7 +7,7 @@ namespace PoMiniApps.Web.Services.Lyrics;
 /// Service for retrieving song lyrics from a JSON collection.
 /// Uses lazy loading with thread-safe caching.
 /// </summary>
-public sealed class LyricsService : ILyricsService
+public class LyricsService
 {
     private readonly string _lyricsFilePath;
     private readonly ILogger<LyricsService> _logger;
@@ -40,13 +40,13 @@ public sealed class LyricsService : ILyricsService
         finally { _loadSemaphore.Release(); }
     }
 
-    public async Task<List<string>> GetAvailableSongsAsync(CancellationToken cancellationToken = default)
+    public virtual async Task<List<string>> GetAvailableSongsAsync(CancellationToken cancellationToken = default)
     {
         var collection = await GetCollectionAsync(cancellationToken);
         return collection.Songs.Select(s => s.Title).OrderBy(t => t).ToList();
     }
 
-    public async Task<string?> GetLyricsAsync(string songTitle, CancellationToken cancellationToken = default)
+    public virtual async Task<string?> GetLyricsAsync(string songTitle, CancellationToken cancellationToken = default)
     {
         var collection = await GetCollectionAsync(cancellationToken);
         var song = collection.Songs.FirstOrDefault(s => s.Title.Equals(songTitle, StringComparison.OrdinalIgnoreCase));
@@ -55,7 +55,7 @@ public sealed class LyricsService : ILyricsService
         return words.Length <= MaxWords ? song.Lyrics : string.Join(" ", words.Take(MaxWords)) + "...";
     }
 
-    public async Task<(string? Title, string? Lyrics)> GetRandomLyricsAsync(CancellationToken cancellationToken = default)
+    public virtual async Task<(string? Title, string? Lyrics)> GetRandomLyricsAsync(CancellationToken cancellationToken = default)
     {
         var collection = await GetCollectionAsync(cancellationToken);
         if (collection.Songs.Count == 0) return (null, null);

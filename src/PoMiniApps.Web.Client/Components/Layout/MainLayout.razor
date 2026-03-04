@@ -7,26 +7,14 @@
             <RadzenLink Path="/" Text="🚀 PoMiniApps"
                         Style="font-size: 1.5rem; font-weight: bold; color: white; text-decoration: none;" />
 
-            @if (!IsHomePage)
+            @if (!IsHomePage && CurrentAppName != null)
             {
                 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem"
-                             Style="margin-left: auto;">
-                    @if (CurrentAppName != null)
-                    {
-                        <RadzenLink Path="/" Icon="home" IconColor="rgba(255,255,255,0.7)"
-                                    Style="color: rgba(255,255,255,0.7);" />
-                        <span style="color: rgba(255,255,255,0.4);">›</span>
-                        <RadzenLink Path="@CurrentAppRoute" Text="@CurrentAppName" Style="color: rgba(255,255,255,0.85);" />
-                        @if (!string.IsNullOrEmpty(CurrentPageName) && CurrentPageName != CurrentAppName)
-                        {
-                            <span style="color: rgba(255,255,255,0.4);">›</span>
-                            <span style="color: rgba(255,255,255,0.7);">@CurrentPageName</span>
-                        }
-                    }
-                    else
-                    {
-                        <RadzenLink Path="/" Icon="home" Text="Home" Style="color: rgba(255,255,255,0.7);" />
-                    }
+                             Style="margin-left: auto; font-size: 0.9rem;">
+                    <RadzenLink Path="/" Icon="home" IconColor="rgba(255,255,255,0.6)"                                Style="color: rgba(255,255,255,0.6);"
+                                title="Home" />
+                    <span style="color: rgba(255,255,255,0.3);">›</span>
+                    <span style="color: rgba(255,255,255,0.7);">@CurrentAppName</span>
                 </RadzenStack>
             }
         </RadzenStack>
@@ -38,7 +26,12 @@
     </RadzenBody>
     <RadzenFooter>
         <div class="rz-text-align-center rz-p-2" style="font-size: 0.8rem; color: #aaa;">
-            PoMiniApps &copy; @DateTime.UtcNow.Year — Mini Apps Collection
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="2rem"
+                         AlignItems="AlignItems.Center">
+                <span>PoMiniApps &copy; @DateTime.UtcNow.Year</span>
+                <RadzenLink Path="/diag" Icon="settings" Text="Diagnostics"
+                            Style="color: rgba(255,255,255,0.5); font-size: 0.8rem;" title="System Diagnostics" />
+            </RadzenStack>
         </div>
     </RadzenFooter>
 </RadzenLayout>
@@ -57,7 +50,6 @@
             var path = Navigation.ToBaseRelativePath(Navigation.Uri).ToLowerInvariant();
             if (path.Contains("rap-battle") || path.Contains("rap-debate")) return "Rap Battle Arena";
             if (path.Contains("victorian") || path.Contains("translat")) return "Victorian Translator";
-            if (path.Contains("leaderboard")) return "Leaderboard";
             return null;
         }
     }
@@ -78,7 +70,6 @@
         get
         {
             var path = Navigation.ToBaseRelativePath(Navigation.Uri).ToLowerInvariant();
-            if (path.Contains("leaderboard")) return "Leaderboard";
             if (path.Contains("diagnostics")) return "Diagnostics";
             return null;
         }

@@ -11,7 +11,7 @@ namespace PoMiniApps.Web.Extensions;
 /// </summary>
 public static class OpenTelemetryExtensions
 {
-    public static IServiceCollection AddPoLingualOpenTelemetry(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddPoMiniGamesOpenTelemetry(this IServiceCollection services, IConfiguration configuration)
     {
         var poSharedConnectionString =
             configuration["PoMiniApps:Azure:PoShared:ApplicationInsights:ConnectionString"]

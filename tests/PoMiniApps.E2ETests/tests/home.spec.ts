@@ -1,20 +1,5 @@
-import { expect, test, type Page } from '@playwright/test';
-
-function attachClientErrorCapture(page: Page): string[] {
-  const clientErrors: string[] = [];
-
-  page.on('pageerror', (error) => {
-    clientErrors.push(`pageerror: ${error.message}`);
-  });
-
-  page.on('console', (message) => {
-    if (message.type() === 'error') {
-      clientErrors.push(`console.error: ${message.text()}`);
-    }
-  });
-
-  return clientErrors;
-}
+import { expect, test } from '@playwright/test';
+import { attachClientErrorCapture } from '../helpers/client-error-capture';
 
 test.describe('Home Page', () => {
   test('should display the PoMiniApps title', async ({ page }) => {

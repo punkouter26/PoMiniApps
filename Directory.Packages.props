@@ -45,7 +45,6 @@
 
   <ItemGroup Label="API Documentation">
     <PackageVersion Include="Scalar.AspNetCore" Version="2.2.0" />
-    <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.0.1" />
   </ItemGroup>
 
   <ItemGroup Label="Logging">

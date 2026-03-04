@@ -12,7 +12,7 @@ public static class SpeechEndpoints
     {
         var group = endpoints.MapGroup("/api/speech").WithTags("Speech").WithOpenApi();
 
-        group.MapPost("/synthesize", async (SpeechRequest request, IAudioSynthesisService audioService, DebateMetrics metrics) =>
+        group.MapPost("/synthesize", async (SpeechRequest request, AudioSynthesisService audioService, DebateMetrics metrics) =>
         {
             if (string.IsNullOrWhiteSpace(request.Text))
                 return Results.BadRequest(new { error = "Text is required." });

@@ -20,6 +20,17 @@
             <RadzenText TextStyle="TextStyle.H5" class="rz-mb-4">Set Up Your Battle</RadzenText>
 
             <RadzenStack Gap="1.5rem">
+                @* Quick Battle Option *@
+                <RadzenButton Text="⚡ Quick Battle (Random Matchup)" Icon="bolt" 
+                              ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large"
+                              Click="@StartQuickBattleAsync"
+                              Disabled="@(_isConnecting || _rappers == null || _rappers.Count < 2 || _topics == null || _topics.Count < 1)"
+                              IsBusy="@_isConnecting" Style="width: 100%;" />
+                
+                <div style="position: relative; text-align: center;">
+                    <div style="border-top: 1px solid rgba(255,255,255,0.1); width: 100%;"></div>
+                    <span style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--rz-base-background-color); padding: 0 1rem; color: rgba(255,255,255,0.5); font-size: 0.9rem;">or customize your matchup</span>
+                </div>
                 <RadzenRow Gap="1rem" AlignItems="AlignItems.End">
                     <RadzenColumn Size="5">
                         <RadzenFormField Text="Rapper 1" Style="width: 100%;">
@@ -38,7 +49,7 @@
                         </RadzenFormField>
                     </RadzenColumn>
                     <RadzenColumn Size="2">
-                        <div style="text-align: center; font-size: 1.5rem; font-weight: bold; color: #e53935;">VS</div>
+                        <div style="text-align: center; font-size: 1.5rem; font-weight: bold; color: #ff5252;">VS</div>
                     </RadzenColumn>
                     <RadzenColumn Size="5">
                         <RadzenFormField Text="Rapper 2" Style="width: 100%;">
@@ -73,6 +84,13 @@
                     </ChildContent>
                 </RadzenFormField>
 
+                @if (!string.IsNullOrWhiteSpace(_errorMessage))
+                {
+                    <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter">
+                        @_errorMessage
+                    </RadzenAlert>
+                }
+
                 <RadzenButton Text="🔥 Start Battle" Icon="play_arrow" ButtonStyle="ButtonStyle.Danger"
                               Size="ButtonSize.Large" Click="@StartDebateAsync"
                               Disabled="@(string.IsNullOrWhiteSpace(_rapper1Name) || string.IsNullOrWhiteSpace(_rapper2Name) || string.IsNullOrWhiteSpace(_selectedTopic) || _isConnecting)"
@@ -80,31 +98,46 @@
             </RadzenStack>
         </RadzenCard>
 
-        @* Leaderboard below setup *@
+        @* Collapsed Leaderboard *@
         <RadzenCard class="leaderboard-card">
-            <RadzenText TextStyle="TextStyle.H5" class="rz-mb-3">🏆 Leaderboard</RadzenText>
-            @if (_leaderboardLoading)
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Style="cursor: pointer;" @onclick="() => _showLeaderboard = !_showLeaderboard">
+                <RadzenText TextStyle="TextStyle.H6" Style="margin: 0; flex: 1;">🏆 Leaderboard</RadzenText>
+                @if (_rappers is not null && _rappers.Count > 0 && !_showLeaderboard)
+                {
+                    <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" Style="font-size: 0.85rem; color: rgba(255,255,255,0.6);">
+                        <span>Top 3: @string.Join(", ", _rappers.Take(3).Select(r => r.Name))</span>
+                    </RadzenStack>
+                }
+                <RadzenIcon Icon="@(_showLeaderboard ? "expand_less" : "expand_more")" Style="color: rgba(255,255,255,0.6);" />
+            </RadzenStack>
+            
+            @if (_showLeaderboard)
             {
-                <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Medium" />
-            }
-            else if (_rappers is not null && _rappers.Count > 0)
-            {
-                <RadzenDataGrid Data="@_rappers" TItem="RapperRow" AllowSorting="true" AllowPaging="true" PageSize="8"
-                                Style="width: 100%;" Density="Density.Compact">
-                    <Columns>
-                        <RadzenDataGridColumn TItem="RapperRow" Property="Rank" Title="#" Width="50px" />
-                        <RadzenDataGridColumn TItem="RapperRow" Property="Name" Title="Rapper" />
-                        <RadzenDataGridColumn TItem="RapperRow" Property="Wins" Title="W" Width="60px" />
-                        <RadzenDataGridColumn TItem="RapperRow" Property="Losses" Title="L" Width="60px" />
-                        <RadzenDataGridColumn TItem="RapperRow" Property="WinRate" Title="Win %" Width="80px" FormatString="{0:P0}" />
-                    </Columns>
-                </RadzenDataGrid>
-            }
-            else
-            {
-                <RadzenAlert AlertStyle="AlertStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter" Size="AlertSize.Small">
-                    No battles yet. Be the first to start one!
-                </RadzenAlert>
+                <div class="rz-mt-3">
+                    @if (_leaderboardLoading)
+                    {
+                        <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Medium" />
+                    }
+                    else if (_rappers is not null && _rappers.Count > 0)
+                    {
+                        <RadzenDataGrid Data="@_rappers" TItem="RapperRow" AllowSorting="true" AllowPaging="true" PageSize="8"
+                                        Style="width: 100%;" Density="Density.Compact">
+                            <Columns>
+                                <RadzenDataGridColumn TItem="RapperRow" Property="Rank" Title="#" Width="50px" />
+                                <RadzenDataGridColumn TItem="RapperRow" Property="Name" Title="Rapper" />
+                                <RadzenDataGridColumn TItem="RapperRow" Property="Wins" Title="W" Width="60px" />
+                                <RadzenDataGridColumn TItem="RapperRow" Property="Losses" Title="L" Width="60px" />
+                                <RadzenDataGridColumn TItem="RapperRow" Property="WinRate" Title="Win %" Width="80px" FormatString="{0:P0}" />
+                            </Columns>
+                        </RadzenDataGrid>
+                    }
+                    else
+                    {
+                        <RadzenAlert AlertStyle="AlertStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter" Size="AlertSize.Small">
+                            No battles yet. Be the first to start one!
+                        </RadzenAlert>
+                    }
+                </div>
             }
         </RadzenCard>
     }
@@ -112,22 +145,38 @@
     @if (_debateInProgress || _debateFinished)
     {
         <div class="battle-arena">
+            @if (_isConnecting)
+            {
+                <div class="progress-indicator">
+                    <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Small" />
+                    <div class="progress-step active">
+                        <strong>Connecting to debate engine...</strong>
+                    </div>
+                </div>
+            }
+
             <div class="battle-header">
                 <span class="rapper-name rapper1-name">@_rapper1Name</span>
                 <span class="vs-badge">VS</span>
                 <span class="rapper-name rapper2-name">@_rapper2Name</span>
             </div>
-            <div class="battle-topic">Topic: @_selectedTopic</div>
+            <div class="battle-topic">📰 Topic: @_selectedTopic</div>
 
             @if (_isGeneratingTurn)
             {
                 <div class="generating-indicator">
                     <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Small" />
-                    <span>Generating verse...</span>
+                    <span>🎤 Generating verse (@(_turns.Count) / 6 rounds)...</span>
                 </div>
             }
 
             <div class="battle-transcript">
+                @if (_turns.Count == 0 && _debateInProgress)
+                {
+                    <div class="intro-announcement">
+                        <p><text style="font-size: 1.1em; font-weight: bold; color: #ff6b6b;">🔥 Let the battle begin! @_rapper1Name vs @_rapper2Name on "@_selectedTopic" — 3 rounds. Let's go!</text></p>
+                    </div>
+                }
                 @foreach (var turn in _turns)
                 {
                     <div class="debate-turn @(turn.IsRapper1 ? "rapper1-turn" : "rapper2-turn")">
@@ -143,7 +192,10 @@
             @if (!string.IsNullOrWhiteSpace(_errorMessage))
             {
                 <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" class="rz-mt-3">
-                    @_errorMessage
+                    <strong>⚠️ Battle Error:</strong> @_errorMessage
+                    <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+                        <RadzenButton Text="Try Again" Click="@ResetDebate" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small" />
+                    </div>
                 </RadzenAlert>
             }
 
@@ -155,28 +207,30 @@
 
                     @if (_stats is not null)
                     {
-                        <RadzenRow Gap="1rem" class="rz-mt-4">
-                            <RadzenColumn Size="6">
-                                <div class="score-card">
-                                    <h6>@_rapper1Name</h6>
-                                    <div class="score-item">Logic: <strong>@_stats.Rapper1LogicScore</strong></div>
-                                    <div class="score-item">Flow: <strong>@_stats.Rapper1SentimentScore</strong></div>
-                                    <div class="score-item">Topic: <strong>@_stats.Rapper1AdherenceScore</strong></div>
-                                    <div class="score-item">Rebuttal: <strong>@_stats.Rapper1RebuttalScore</strong></div>
-                                    <div class="score-total">Total: <strong>@_stats.Rapper1TotalScore</strong></div>
+                        <div class="rz-mt-4">
+                            <RadzenStack Gap="1rem">
+                                <div>
+                                    <RadzenText TextStyle="TextStyle.Subtitle2" Style="margin-bottom: 0.5rem;">@_rapper1Name</RadzenText>
+                                    @{
+                                        var rapper1Title = $"Logic: {_stats.Rapper1LogicScore} | Flow: {_stats.Rapper1SentimentScore} | Topic: {_stats.Rapper1AdherenceScore} | Rebuttal: {_stats.Rapper1RebuttalScore}";
+                                    }
+                                    <RadzenProgressBar Value="@_stats.Rapper1TotalScore" Max="40" ShowValue="true" 
+                                                       Style="height: 32px;" 
+                                                       title="@rapper1Title" />
+                                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Hover for breakdown</div>
                                 </div>
-                            </RadzenColumn>
-                            <RadzenColumn Size="6">
-                                <div class="score-card">
-                                    <h6>@_rapper2Name</h6>
-                                    <div class="score-item">Logic: <strong>@_stats.Rapper2LogicScore</strong></div>
-                                    <div class="score-item">Flow: <strong>@_stats.Rapper2SentimentScore</strong></div>
-                                    <div class="score-item">Topic: <strong>@_stats.Rapper2AdherenceScore</strong></div>
-                                    <div class="score-item">Rebuttal: <strong>@_stats.Rapper2RebuttalScore</strong></div>
-                                    <div class="score-total">Total: <strong>@_stats.Rapper2TotalScore</strong></div>
+                                <div>
+                                    <RadzenText TextStyle="TextStyle.Subtitle2" Style="margin-bottom: 0.5rem;">@_rapper2Name</RadzenText>
+                                    @{
+                                        var rapper2Title = $"Logic: {_stats.Rapper2LogicScore} | Flow: {_stats.Rapper2SentimentScore} | Topic: {_stats.Rapper2AdherenceScore} | Rebuttal: {_stats.Rapper2RebuttalScore}";
+                                    }
+                                    <RadzenProgressBar Value="@_stats.Rapper2TotalScore" Max="40" ShowValue="true" 
+                                                       Style="height: 32px;" 
+                                                       title="@rapper2Title" />
+                                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.25rem;">Hover for breakdown</div>
                                 </div>
-                            </RadzenColumn>
-                        </RadzenRow>
+                            </RadzenStack>
+                        </div>
                     }
 
                     <RadzenButton Text="New Battle" Icon="replay" ButtonStyle="ButtonStyle.Primary"
@@ -200,6 +254,7 @@
     private bool _isGeneratingTurn;
     private bool _isConnecting;
     private bool _leaderboardLoading = true;
+    private bool _showLeaderboard = false;
     private List<TopicItem>? _topics;
     private List<RapperRow>? _rappers;
     private DebateStats? _stats;
@@ -211,6 +266,44 @@
         var topicsTask = LoadTopicsAsync();
         var leaderboardTask = LoadLeaderboardAsync();
         await Task.WhenAll(topicsTask, leaderboardTask);
+        
+        // Set smart defaults after data loads
+        ApplySmartDefaults();
+    }
+    
+    private void ApplySmartDefaults()
+    {
+        // Auto-select top 2 rappers from leaderboard if available
+        if (_rappers is not null && _rappers.Count >= 2)
+        {
+            _rapper1Name = _rappers[0].Name;
+            _rapper2Name = _rappers[1].Name;
+        }
+        
+        // Auto-select first topic if available
+        if (_topics is not null && _topics.Count > 0)
+        {
+            _selectedTopic = _topics[0].Title;
+        }
+    }
+    
+    private async Task StartQuickBattleAsync()
+    {
+        // Randomize selections
+        if (_rappers is not null && _rappers.Count >= 2)
+        {
+            var random = new Random();
+            var shuffled = _rappers.OrderBy(_ => random.Next()).Take(2).ToList();
+            _rapper1Name = shuffled[0].Name;
+            _rapper2Name = shuffled[1].Name;
+        }
+        
+        if (_topics is not null && _topics.Count > 0)
+        {
+            _selectedTopic = _topics[new Random().Next(_topics.Count)].Title;
+        }
+        
+        await StartDebateAsync();
     }
 
     private async Task LoadTopicsAsync()

@@ -5,20 +5,13 @@ namespace PoMiniApps.Web.Services.Data;
 /// <summary>
 /// Generic Azure Table Storage service using Repository pattern abstraction.
 /// </summary>
-public class TableStorageService : ITableStorageService
+public class TableStorageService(IConfiguration configuration, ILogger<TableStorageService> logger) : ITableStorageService
 {
-    private readonly string _connectionString;
-    private readonly ILogger<TableStorageService> _logger;
-
-    public TableStorageService(IConfiguration configuration, ILogger<TableStorageService> logger)
-    {
-        _connectionString = configuration["PoMiniApps:AzureStorageConnectionString"]
-            ?? configuration["PoMiniApps:Azure:StorageConnectionString"]
-            ?? configuration["AzureStorageConnectionString"]
-            ?? configuration["Azure:StorageConnectionString"]
-            ?? throw new InvalidOperationException("PoMiniApps:AzureStorageConnectionString, PoMiniApps:Azure:StorageConnectionString, AzureStorageConnectionString or Azure:StorageConnectionString not found in configuration.");
-        _logger = logger;
-    }
+    private readonly string _connectionString = configuration["PoMiniApps:AzureStorageConnectionString"]
+        ?? configuration["PoMiniApps:Azure:StorageConnectionString"]
+        ?? configuration["AzureStorageConnectionString"]
+        ?? configuration["Azure:StorageConnectionString"]
+        ?? throw new InvalidOperationException("PoMiniApps:AzureStorageConnectionString, PoMiniApps:Azure:StorageConnectionString, AzureStorageConnectionString or Azure:StorageConnectionString not found in configuration.");
 
     private TableServiceClient GetTableServiceClient() => new TableServiceClient(_connectionString);
 
@@ -32,11 +25,11 @@ public class TableStorageService : ITableStorageService
         catch (Azure.RequestFailedException ex) when (ex.Status == 400)
         {
             // Azurite may throw 400 on table creation; table likely exists or will be created on first use
-            _logger.LogWarning(ex, "Table creation returned 400 for {TableName}. Continuing...", tableName);
+            logger.LogWarning(ex, "Table creation returned 400 for {TableName}. Continuing...", tableName);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error creating table {TableName}", tableName);
+            logger.LogError(ex, "Error creating table {TableName}", tableName);
             throw;
         }
         return tableClient;
@@ -51,7 +44,7 @@ public class TableStorageService : ITableStorageService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error getting entity from {Table} PK={PK} RK={RK}", tableName, partitionKey, rowKey);
+            logger.LogError(ex, "Error getting entity from {Table} PK={PK} RK={RK}", tableName, partitionKey, rowKey);
             return null;
         }
     }

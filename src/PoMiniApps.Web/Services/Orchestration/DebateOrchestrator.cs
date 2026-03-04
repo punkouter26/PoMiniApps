@@ -4,7 +4,6 @@ using PoMiniApps.Web.Hubs;
 using PoMiniApps.Web.Services.AI;
 using PoMiniApps.Web.Services.Speech;
 using PoMiniApps.Web.Services.Data;
-using PoMiniApps.Web.Services.Factories;
 using Microsoft.AspNetCore.SignalR;
 using System.Text;
 
@@ -12,12 +11,12 @@ namespace PoMiniApps.Web.Services.Orchestration;
 
 /// <summary>
 /// Orchestrates the full lifecycle of a rap debate.
-/// Uses IHubContext for SignalR state broadcasting and Factory pattern for scoped service creation.
+/// Uses IHubContext for SignalR state broadcasting and IServiceScopeFactory for scoped service creation.
 /// </summary>
 public class DebateOrchestrator : IDebateOrchestrator
 {
     private readonly ILogger<DebateOrchestrator> _logger;
-    private readonly IDebateServiceFactory _serviceFactory;
+    private readonly IServiceScopeFactory _scopeFactory;
     private readonly IHubContext<DebateHub> _hubContext;
     private DebateState _currentState;
     public DebateState CurrentState => _currentState;
@@ -29,12 +28,12 @@ public class DebateOrchestrator : IDebateOrchestrator
     private const int MaxTokensPerTurn = 150;
     private const string Rapper1Voice = "en-US-GuyNeural";
     private const string Rapper2Voice = "en-US-JennyNeural";
-    private static readonly TimeSpan AudioPlaybackTimeout = TimeSpan.FromSeconds(60);
+    private static readonly TimeSpan AudioPlaybackTimeout = TimeSpan.FromSeconds(15); // Reduced from 60s for better UX
 
-    public DebateOrchestrator(ILogger<DebateOrchestrator> logger, IDebateServiceFactory serviceFactory, IHubContext<DebateHub> hubContext)
+    public DebateOrchestrator(ILogger<DebateOrchestrator> logger, IServiceScopeFactory scopeFactory, IHubContext<DebateHub> hubContext)
     {
         _logger = logger;
-        _serviceFactory = serviceFactory;
+        _scopeFactory = scopeFactory;
         _hubContext = hubContext;
         _currentState = DebateStateFactory.CreateEmpty();
         _audioPlaybackCompletionSource = new TaskCompletionSource<bool>();
@@ -53,30 +52,46 @@ public class DebateOrchestrator : IDebateOrchestrator
 
     public async Task StartNewDebateAsync(Rapper rapper1, Rapper rapper2, Topic topic)
     {
+        // Concurrency guard: Prevent starting a new debate if one is already in progress
+        if (_currentState.IsDebateInProgress)
+        {
+            _logger.LogWarning("Attempted to start new debate while one is already in progress");
+            throw new InvalidOperationException("A debate is already in progress. Please wait for it to complete or reset it first.");
+        }
+
+        // Entity validation: Verify rappers exist in repository before starting expensive AI workflow
+        using (var validationScope = _scopeFactory.CreateScope())
+        {
+            var rapperRepository = validationScope.ServiceProvider.GetRequiredService<IRapperRepository>();
+            var existingRappers = await rapperRepository.GetAllRappersAsync();
+            var rapperNames = existingRappers.Select(r => r.Name).ToHashSet();
+
+            if (!rapperNames.Contains(rapper1.Name))
+            {
+                _logger.LogWarning("Attempted to start debate with non-existent rapper: {Rapper1}", rapper1.Name);
+                throw new InvalidOperationException($"Rapper '{rapper1.Name}' no longer exists. Please refresh and select a valid rapper.");
+            }
+
+            if (!rapperNames.Contains(rapper2.Name))
+            {
+                _logger.LogWarning("Attempted to start debate with non-existent rapper: {Rapper2}", rapper2.Name);
+                throw new InvalidOperationException($"Rapper '{rapper2.Name}' no longer exists. Please refresh and select a valid rapper.");
+            }
+        }
+
         ResetDebate();
+
+        // Ensure proper disposal of any existing CancellationTokenSource before creating new one
+        _debateCancellationTokenSource?.Dispose();
         _debateCancellationTokenSource = new CancellationTokenSource();
+
         _currentState = DebateStateFactory.CreateForNewDebate(rapper1, rapper2, topic, MaxDebateTurns);
         await NotifyStateChangeAsync();
-        await GenerateIntroductionAsync();
+        // Intro is now displayed as a visual announcement in the UI, not as an audio turn
+        // Wait briefly before starting the actual turns
+        await Task.Delay(500);
         _logger.LogInformation("Debate started: {R1} vs {R2} on {Topic}", rapper1.Name, rapper2.Name, topic.Title);
         _ = Task.Run(() => RunDebateTurnsAsync(_debateCancellationTokenSource.Token));
-    }
-
-    private async Task GenerateIntroductionAsync()
-    {
-        try
-        {
-            using var scope = _serviceFactory.CreateScope();
-            _currentState.CurrentTurnAudio = await scope.TTSService.GenerateSpeechAsync(_currentState.CurrentTurnText, Rapper1Voice, CancellationToken.None);
-            await NotifyStateChangeAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error generating intro speech.");
-            _currentState.CurrentTurnAudio = [];
-            await NotifyStateChangeAsync();
-        }
-        _audioPlaybackCompletionSource = new TaskCompletionSource<bool>();
     }
 
     private async Task RunDebateTurnsAsync(CancellationToken cancellationToken)
@@ -85,7 +100,10 @@ public class DebateOrchestrator : IDebateOrchestrator
         {
             while (_currentState.CurrentTurn < MaxDebateTurns && !cancellationToken.IsCancellationRequested)
             {
-                using var serviceScope = _serviceFactory.CreateScope();
+                using var serviceScope = _scopeFactory.CreateScope();
+                var aiService = serviceScope.ServiceProvider.GetRequiredService<IAzureOpenAIService>();
+                var ttsService = serviceScope.ServiceProvider.GetRequiredService<ITextToSpeechService>();
+
                 _currentState.CurrentTurn++;
                 _currentState.IsGeneratingTurn = true;
                 _currentState.ErrorMessage = string.Empty;
@@ -104,7 +122,7 @@ public class DebateOrchestrator : IDebateOrchestrator
 
                 try
                 {
-                    _currentState.CurrentTurnText = await serviceScope.AIService.GenerateDebateTurnAsync(prompt, MaxTokensPerTurn, cancellationToken);
+                    _currentState.CurrentTurnText = await aiService.GenerateDebateTurnAsync(prompt, MaxTokensPerTurn, cancellationToken);
                     _currentState.DebateTranscript.AppendLine($"{currentRapper} (Turn {_currentState.CurrentTurn}):\n{_currentState.CurrentTurnText}\n");
                 }
                 catch (Exception ex)
@@ -116,7 +134,7 @@ public class DebateOrchestrator : IDebateOrchestrator
                 try
                 {
                     string voice = _currentState.IsRapper1Turn ? Rapper1Voice : Rapper2Voice;
-                    _currentState.CurrentTurnAudio = await serviceScope.TTSService.GenerateSpeechAsync(_currentState.CurrentTurnText, voice, cancellationToken);
+                    _currentState.CurrentTurnAudio = await ttsService.GenerateSpeechAsync(_currentState.CurrentTurnText, voice, cancellationToken);
                 }
                 catch (Exception ex)
                 {
@@ -145,10 +163,13 @@ public class DebateOrchestrator : IDebateOrchestrator
                 _currentState.IsGeneratingTurn = true;
                 await NotifyStateChangeAsync();
 
-                using var judgeScope = _serviceFactory.CreateScope();
+                using var judgeScope = _scopeFactory.CreateScope();
+                var judgeAiService = judgeScope.ServiceProvider.GetRequiredService<IAzureOpenAIService>();
+                var rapperRepository = judgeScope.ServiceProvider.GetRequiredService<IRapperRepository>();
+
                 try
                 {
-                    var judgeResponse = await judgeScope.AIService.JudgeDebateAsync(
+                    var judgeResponse = await judgeAiService.JudgeDebateAsync(
                         _currentState.DebateTranscript.ToString(), _currentState.Rapper1.Name, _currentState.Rapper2.Name, _currentState.Topic.Title, cancellationToken);
                     _currentState.WinnerName = judgeResponse.WinnerName;
                     _currentState.JudgeReasoning = judgeResponse.Reasoning;
@@ -157,7 +178,7 @@ public class DebateOrchestrator : IDebateOrchestrator
                     if (!string.IsNullOrEmpty(_currentState.WinnerName) && _currentState.WinnerName != "Error Judging")
                     {
                         string loserName = _currentState.WinnerName == _currentState.Rapper1.Name ? _currentState.Rapper2.Name : _currentState.Rapper1.Name;
-                        await judgeScope.RapperRepository.UpdateWinLossRecordAsync(_currentState.WinnerName, loserName);
+                        await rapperRepository.UpdateWinLossRecordAsync(_currentState.WinnerName, loserName);
                     }
                 }
                 catch (Exception ex)
@@ -188,28 +209,47 @@ public class DebateOrchestrator : IDebateOrchestrator
 
     private async Task NotifyStateChangeAsync()
     {
-        try
+        const int MaxRetries = 3;
+        var retryDelays = new[] { TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(300), TimeSpan.FromMilliseconds(500) };
+
+        for (int attempt = 0; attempt <= MaxRetries; attempt++)
         {
-            await _hubContext.Clients.All.SendAsync("DebateStateUpdated", new
+            try
             {
-                _currentState.CurrentTurn,
-                _currentState.IsDebateInProgress,
-                _currentState.IsDebateFinished,
-                _currentState.IsGeneratingTurn,
-                _currentState.IsRapper1Turn,
-                _currentState.CurrentTurnText,
-                CurrentTurnNumber = _currentState.CurrentTurn,
-                _currentState.WinnerName,
-                _currentState.JudgeReasoning,
-                _currentState.ErrorMessage,
-                Rapper1Name = _currentState.Rapper1.Name,
-                Rapper2Name = _currentState.Rapper2.Name,
-                TopicTitle = _currentState.Topic.Title,
-                HasAudio = _currentState.CurrentTurnAudio is { Length: > 0 },
-                AudioBase64 = _currentState.CurrentTurnAudio is { Length: > 0 } ? Convert.ToBase64String(_currentState.CurrentTurnAudio) : null,
-                _currentState.Stats
-            });
+                await _hubContext.Clients.All.SendAsync("DebateStateUpdated", new
+                {
+                    _currentState.CurrentTurn,
+                    _currentState.IsDebateInProgress,
+                    _currentState.IsDebateFinished,
+                    _currentState.IsGeneratingTurn,
+                    _currentState.IsRapper1Turn,
+                    _currentState.CurrentTurnText,
+                    CurrentTurnNumber = _currentState.CurrentTurn,
+                    _currentState.WinnerName,
+                    _currentState.JudgeReasoning,
+                    _currentState.ErrorMessage,
+                    Rapper1Name = _currentState.Rapper1.Name,
+                    Rapper2Name = _currentState.Rapper2.Name,
+                    TopicTitle = _currentState.Topic.Title,
+                    HasAudio = _currentState.CurrentTurnAudio is { Length: > 0 },
+                    AudioBase64 = _currentState.CurrentTurnAudio is { Length: > 0 } ? Convert.ToBase64String(_currentState.CurrentTurnAudio) : null,
+                    _currentState.Stats
+                });
+                return; // Success, exit retry loop
+            }
+            catch (Exception ex)
+            {
+                if (attempt < MaxRetries)
+                {
+                    _logger.LogWarning(ex, "SignalR send failed (attempt {Attempt}/{Total}), retrying...", attempt + 1, MaxRetries + 1);
+                    await Task.Delay(retryDelays[attempt]);
+                }
+                else
+                {
+                    _logger.LogError(ex, "SignalR send failed after {MaxRetries} attempts. State update lost.", MaxRetries + 1);
+                    // Consider storing state for client polling fallback
+                }
+            }
         }
-        catch (Exception ex) { _logger.LogError(ex, "Error sending state update via SignalR."); }
     }
 }

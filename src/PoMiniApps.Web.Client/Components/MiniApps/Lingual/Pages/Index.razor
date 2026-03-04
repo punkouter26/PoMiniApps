@@ -14,7 +14,8 @@
     <RadzenStack Gap="2rem" Style="max-width: 1200px; margin: 2rem auto;">
         <RadzenRow Gap="2rem">
             <RadzenColumn Size="12" SizeMD="6">
-                <RadzenCard class="feature-card rap-feature" @onclick='() => Navigation.NavigateTo("/apps/lingual/rap-battle")'>
+                <RadzenCard class="feature-card rap-feature"
+                            @onclick='() => Navigation.NavigateTo("/apps/lingual/rap-battle")'>
                     <RadzenStack Gap="1rem">
                         <div class="feature-icon">🎙️</div>
                         <RadzenText TextStyle="TextStyle.H5" class="feature-title">Rap Battle Arena</RadzenText>
@@ -29,13 +30,15 @@
                             <RadzenBadge Text="SignalR" Variant="Variant.Filled" IsPill="true" />
                             <RadzenBadge Text="AI Judging" Variant="Variant.Filled" IsPill="true" />
                         </div>
-                        <RadzenButton Text="Enter Arena" Icon="play_arrow" ButtonStyle="ButtonStyle.Danger" Style="align-self: flex-start;" />
+                        <RadzenButton Text="Enter Arena" Icon="play_arrow" ButtonStyle="ButtonStyle.Danger"
+                                      Style="align-self: flex-start;" />
                     </RadzenStack>
                 </RadzenCard>
             </RadzenColumn>
 
             <RadzenColumn Size="12" SizeMD="6">
-                <RadzenCard class="feature-card victorian-feature" @onclick='() => Navigation.NavigateTo("/apps/lingual/victorian-translator")'>
+                <RadzenCard class="feature-card victorian-feature"
+                            @onclick='() => Navigation.NavigateTo("/apps/lingual/victorian-translator")'>
                     <RadzenStack Gap="1rem">
                         <div class="feature-icon">🎩</div>
                         <RadzenText TextStyle="TextStyle.H5" class="feature-title">Victorian Translator</RadzenText>
@@ -49,27 +52,14 @@
                             <RadzenBadge Text="Lyrics Library" Variant="Variant.Filled" IsPill="true" />
                             <RadzenBadge Text="British TTS" Variant="Variant.Filled" IsPill="true" />
                         </div>
-                        <RadzenButton Text="Start Translating" Icon="translate" ButtonStyle="ButtonStyle.Primary" Style="align-self: flex-start;" />
+                        <RadzenButton Text="Start Translating" Icon="translate" ButtonStyle="ButtonStyle.Primary"
+                                      Style="align-self: flex-start;" />
                     </RadzenStack>
                 </RadzenCard>
             </RadzenColumn>
         </RadzenRow>
 
-        <RadzenRow>
-            <RadzenColumn>
-                <RadzenCard>
-                    <RadzenStack Gap="1rem">
-                        <RadzenText TextStyle="TextStyle.H6">Quick Access</RadzenText>
-                        <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem" Wrap="FlexWrap.Wrap">
-                            <RadzenButton Text="🏆 Leaderboard" Click='() => Navigation.NavigateTo("/apps/lingual/leaderboard")' 
-                                          ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Outlined" />
-                            <RadzenButton Text="🔧 Diagnostics" Click='() => Navigation.NavigateTo("/diagnostics")' 
-                                          ButtonStyle="ButtonStyle.Light" Variant="Variant.Outlined" />
-                        </RadzenStack>
-                    </RadzenStack>
-                </RadzenCard>
-            </RadzenColumn>
-        </RadzenRow>
+
     </RadzenStack>
 </div>
 
@@ -104,7 +94,7 @@
 
     .feature-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     }
 
     .feature-icon {

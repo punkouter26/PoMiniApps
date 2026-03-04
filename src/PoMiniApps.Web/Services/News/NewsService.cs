@@ -5,7 +5,7 @@ namespace PoMiniApps.Web.Services.News;
 /// <summary>
 /// Fetches news headlines from NewsAPI or provides fallback topics.
 /// </summary>
-public class NewsService : INewsService
+public class NewsService
 {
     private readonly HttpClient _httpClient;
     private readonly ILogger<NewsService> _logger;
@@ -19,7 +19,7 @@ public class NewsService : INewsService
         _httpClient.BaseAddress = new Uri("https://newsapi.org/v2/");
     }
 
-    public async Task<List<NewsHeadline>> GetTopHeadlinesAsync(int count)
+    public virtual async Task<List<NewsHeadline>> GetTopHeadlinesAsync(int count)
     {
         if (string.IsNullOrWhiteSpace(_newsApiKey))
             return GetFallbackTopics(count);

@@ -6,46 +6,89 @@
 
 <PageTitle>PoMiniApps — Diagnostics</PageTitle>
 
-<div style="max-width: 900px; margin: 0 auto;">
-    <div style="padding: 1rem 0 1.5rem;">
+<div class="diagnostics-container">
+    <div class="diagnostics-header">
         <RadzenLink Path="/" Text="← Back to Playground" Style="color: rgba(255,255,255,0.7); font-size: 0.9rem;" />
-        <h2 style="font-size: 1.8rem; font-weight: 700; color: #b0bec5; margin: 0.5rem 0 0;">🔧 Diagnostics</h2>
-    </div>
+        <h2 class="diagnostics-title">🔧 System Diagnostics</h2>
+        <p style="color: var(--text-tertiary); margin-top: 0.5rem;">Check the health of all connected services and
+            dependencies</p>
+        </div>
 
-    <RadzenButton Text="Run All Checks" Icon="play_arrow" Click="@RunDiagnosticsAsync" ButtonStyle="ButtonStyle.Primary"
-                  IsBusy="@_loading" class="rz-mb-4" />
+        <RadzenButton Text="🔄 Run All Checks" Icon="play_arrow" Click="@RunDiagnosticsAsync"
+                      ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large"                  IsBusy="@_loading" class="rz-mb-4"
+                      Style="width: 100%;" />
 
-    @if (_loading)
-    {
-        <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
-    }
-    else if (_results is not null)
-    {
-        <RadzenCard class="rz-mb-4">
-            <RadzenText TextStyle="TextStyle.H6">
-                Summary: @_results.Count(r => r.Success) / @_results.Count passed
-            </RadzenText>
-        </RadzenCard>
+        @if (_loading)
+        {
+            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 2rem;">
+                <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+                <span>Running system diagnostics...</span>
+            </div>
+        }
+        else if (_results is not null)
+        {
+            <div class="diagnostics-summary">
+                <div class="summary-card">
+                    <div class="summary-label">Total Checks</div>
+                    <div class="summary-value">@_results.Count</div>
+                </div>
+                <div class="summary-card" style="border-left-color: var(--success-color);">
+                    <div class="summary-label">Passed</div>
+                    <div class="summary-value" style="color: var(--success-color);">@_results.Count(r => r.Success)</div>
+                </div>
+                <div class="summary-card"
+                     style="border-left-color: @(_results.Any(r => !r.Success) ? "var(--danger-color)" : "var(--success-color)");">
+                    <div class="summary-label">Failed</div>
+                    <div class="summary-value"
+                         style="color: @(_results.Any(r => !r.Success) ? "var(--danger-color)" : "var(--success-color)");">
+                        @_results.Count(r => !r.Success)</div>
+                    </div>
+                </div>
 
-        <RadzenDataGrid Data="@_results" TItem="DiagResult" AllowSorting="true" Style="max-width: 900px;">
-            <Columns>
-                <RadzenDataGridColumn TItem="DiagResult" Property="CheckName" Title="Check" Width="250px" />
-                <RadzenDataGridColumn TItem="DiagResult" Property="Success" Title="Status" Width="100px">
-                    <Template Context="item">
-                        <RadzenBadge BadgeStyle="@(item.Success? BadgeStyle.Success: BadgeStyle.Danger)"
-                                     Text="@(item.Success ? "✅ Pass" : "❌ Fail")" />
-                    </Template>
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="DiagResult" Property="Message" Title="Details" />
-            </Columns>
-        </RadzenDataGrid>
+                @if (_results.GroupBy(r => r.Category).Count() > 0)
+                {
+                    @foreach (var categoryGroup in _results.GroupBy(r => r.Category).OrderBy(g => g.Key))
+                    {
+                        <div class="diagnostics-section">
+                            <h3 class="diagnostics-section-title">@categoryGroup.Key</h3>
 
-        <RadzenCard class="rz-mt-4">
-            <RadzenText TextStyle="TextStyle.H6" class="rz-mb-2">Configuration Snapshot (masked)</RadzenText>
-            <pre style="white-space: pre-wrap; word-break: break-word; margin: 0;">@_configJson</pre>
-        </RadzenCard>
-    }
-</div>
+                            @foreach (var item in categoryGroup.OrderByDescending(r => r.Success))
+                            {
+                                <div class="diag-item @(item.Success ? "success" : item.IsWarning ? "warning" : "error")">
+                                    <div class="diag-item-content">
+                                        <div class="diag-item-name">@item.CheckName</div>
+                                        <div class="diag-item-message">@item.Message</div>
+                                    </div>
+                                    <div class="diag-item-status @(item.Success ? "success" : item.IsWarning ? "warning" : "error")">
+                                        @if (item.Success)
+                                        {
+                                            <span>✅ Healthy</span>
+                                        }
+                                        else if (item.IsWarning)
+                                        {
+                                            <span>⚠️ Warning</span>
+                                        }
+                                        else
+                                        {
+                                            <span>❌ Failed</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+
+                <div class="diagnostics-section" style="margin-top: 2rem;">
+                    <h3 class="diagnostics-section-title">📋 Configuration Snapshot</h3>
+                    <div class="config-snapshot">
+                        <pre>@_configJson</pre>
+                    </div>
+                    <RadzenButton Text="📋 Copy Configuration" Icon="content_copy" ButtonStyle="ButtonStyle.Secondary"
+                                  Style="margin-top: 1rem; width: 100%;" />
+                </div>
+            }
+        </div>
 
 @code {
     private List<DiagResult>? _results;
@@ -68,7 +111,8 @@
         }
         catch (Exception ex)
         {
-            _results = [new DiagResult { CheckName = "HTTP Request", Success = false, Message = $"Failed: {ex.Message}" }];
+            _results = [new DiagResult { CheckName = "HTTP Request", Category = "System", Success = false, IsWarning = false,
+Message = $"Failed: {ex.Message}" }];
             _configJson = JsonSerializer.Serialize(
                 new Dictionary<string, string> { ["error"] = ex.Message },
                 new JsonSerializerOptions { WriteIndented = true });
@@ -79,7 +123,9 @@
     private class DiagResult
     {
         public string CheckName { get; set; } = "";
+        public string Category { get; set; } = "Other";
         public bool Success { get; set; }
+        public bool IsWarning { get; set; }
         public string Message { get; set; } = "";
     }
 }

@@ -8,9 +8,9 @@ namespace PoMiniApps.Web.HealthChecks;
 public class AzureSpeechRestHealthCheck : IHealthCheck
 {
     private readonly ApiSettings _settings;
-    private readonly ISpeechConfigValidator _validator;
+    private readonly SpeechConfigValidator _validator;
 
-    public AzureSpeechRestHealthCheck(IOptions<ApiSettings> settings, ISpeechConfigValidator validator)
+    public AzureSpeechRestHealthCheck(IOptions<ApiSettings> settings, SpeechConfigValidator validator)
     {
         _settings = settings.Value;
         _validator = validator;

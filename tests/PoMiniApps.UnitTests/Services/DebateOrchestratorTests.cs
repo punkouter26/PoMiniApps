@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using PoMiniApps.Shared.Models;
 using PoMiniApps.Web.Hubs;
 using PoMiniApps.Web.Services.AI;
 using PoMiniApps.Web.Services.Data;
-using PoMiniApps.Web.Services.Factories;
 using PoMiniApps.Web.Services.Orchestration;
 using PoMiniApps.Web.Services.Speech;
 
@@ -12,7 +12,7 @@ namespace PoMiniApps.UnitTests.Services;
 
 public class DebateOrchestratorTests
 {
-    private readonly Mock<IDebateServiceFactory> _factoryMock = new();
+    private readonly Mock<IServiceScopeFactory> _scopeFactoryMock = new();
     private readonly Mock<IHubContext<DebateHub>> _hubContextMock = new();
     private readonly DebateOrchestrator _sut;
 
@@ -23,7 +23,7 @@ public class DebateOrchestratorTests
         mockClients.Setup(c => c.All).Returns(mockClientProxy.Object);
         _hubContextMock.Setup(h => h.Clients).Returns(mockClients.Object);
 
-        _sut = new DebateOrchestrator(NullLogger<DebateOrchestrator>.Instance, _factoryMock.Object, _hubContextMock.Object);
+        _sut = new DebateOrchestrator(NullLogger<DebateOrchestrator>.Instance, _scopeFactoryMock.Object, _hubContextMock.Object);
     }
 
     [Fact]

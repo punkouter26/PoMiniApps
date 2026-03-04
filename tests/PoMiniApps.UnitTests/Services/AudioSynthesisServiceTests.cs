@@ -13,7 +13,7 @@ public class AudioSynthesisServiceTests
     public async Task SynthesizeSpeechAsync_WithInvalidConfig_ThrowsInvalidOperationException()
     {
         var options = Options.Create(new ApiSettings());
-        var validator = new Mock<ISpeechConfigValidator>();
+        var validator = new Mock<SpeechConfigValidator>();
         validator.Setup(v => v.IsValid(It.IsAny<ApiSettings>())).Returns(false);
         validator.Setup(v => v.GetValidationError(It.IsAny<ApiSettings>())).Returns("missing config");
         var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -37,7 +37,7 @@ public class AudioSynthesisServiceTests
         };
         var options = Options.Create(settings);
 
-        var validator = new Mock<ISpeechConfigValidator>();
+        var validator = new Mock<SpeechConfigValidator>();
         validator.Setup(v => v.IsValid(It.IsAny<ApiSettings>())).Returns(true);
 
         var handler = new SequenceHttpMessageHandler();

@@ -7,7 +7,7 @@ namespace PoMiniApps.Web.Services.Telemetry;
 /// </summary>
 public sealed class DebateMetrics
 {
-    public const string MeterName = "PoLingual";
+    public const string MeterName = "PoMiniGames";
     private readonly Counter<long> _debatesStarted;
     private readonly Counter<long> _debatesCompleted;
     private readonly Counter<long> _translationsRequested;
@@ -18,12 +18,12 @@ public sealed class DebateMetrics
     public DebateMetrics(IMeterFactory meterFactory)
     {
         var meter = meterFactory.Create(MeterName);
-        _debatesStarted = meter.CreateCounter<long>("polingual.debates.started", "count", "Number of debates started");
-        _debatesCompleted = meter.CreateCounter<long>("polingual.debates.completed", "count", "Number of debates completed");
-        _translationsRequested = meter.CreateCounter<long>("polingual.translations.requested", "count", "Number of translations requested");
-        _ttsRequested = meter.CreateCounter<long>("polingual.tts.requested", "count", "Number of TTS requests");
-        _debateDuration = meter.CreateHistogram<double>("polingual.debates.duration", "ms", "Debate duration in milliseconds");
-        _translationDuration = meter.CreateHistogram<double>("polingual.translations.duration", "ms", "Translation duration in milliseconds");
+        _debatesStarted = meter.CreateCounter<long>("pominigames.debates.started", "count", "Number of debates started");
+        _debatesCompleted = meter.CreateCounter<long>("pominigames.debates.completed", "count", "Number of debates completed");
+        _translationsRequested = meter.CreateCounter<long>("pominigames.translations.requested", "count", "Number of translations requested");
+        _ttsRequested = meter.CreateCounter<long>("pominigames.tts.requested", "count", "Number of TTS requests");
+        _debateDuration = meter.CreateHistogram<double>("pominigames.debates.duration", "ms", "Debate duration in milliseconds");
+        _translationDuration = meter.CreateHistogram<double>("pominigames.translations.duration", "ms", "Translation duration in milliseconds");
     }
 
     public void RecordDebateStarted() => _debatesStarted.Add(1);

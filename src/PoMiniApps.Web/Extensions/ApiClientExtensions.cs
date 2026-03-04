@@ -8,7 +8,7 @@ namespace PoMiniApps.Web.Extensions;
 /// </summary>
 public static class ApiClientExtensions
 {
-    public static IServiceCollection AddPoLingualHttpClients(this IServiceCollection services)
+    public static IServiceCollection AddPoMiniGamesHttpClients(this IServiceCollection services)
     {
         services.AddHttpClient("SpeechToken", client =>
         {

@@ -12,7 +12,7 @@ public static class TopicEndpoints
     {
         var group = endpoints.MapGroup("/api/topics").WithTags("Topics").WithOpenApi();
 
-        group.MapGet("/", async (INewsService newsService, ILogger<Program> logger) =>
+        group.MapGet("/", async (NewsService newsService, ILogger<Program> logger) =>
         {
             try
             {
