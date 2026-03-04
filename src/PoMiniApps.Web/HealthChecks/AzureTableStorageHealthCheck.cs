@@ -18,7 +18,12 @@ public class AzureTableStorageHealthCheck : IHealthCheck
     {
         try
         {
-            var connectionString = _configuration["Azure:TableStorageConnectionString"];
+            // Match the configuration keys used in TableStorageService
+            var connectionString = _configuration["PoMiniApps:AzureStorageConnectionString"]
+                ?? _configuration["PoMiniApps:Azure:StorageConnectionString"]
+                ?? _configuration["AzureStorageConnectionString"]
+                ?? _configuration["Azure:StorageConnectionString"];
+
             if (string.IsNullOrWhiteSpace(connectionString))
                 return HealthCheckResult.Degraded("Table Storage connection string not configured.");
 
