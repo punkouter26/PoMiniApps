@@ -107,7 +107,7 @@ jobs:
           echo "Waiting 45s for app to start..."
           sleep 45
           for i in 1 2 3 4 5 6; do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://${{ env.APP_NAME }}.azurewebsites.net/health)
+            STATUS=$(curl --max-time 20 -s -o /dev/null -w "%{http_code}" https://${{ env.APP_NAME }}.azurewebsites.net/health)
             echo "Attempt $i - Health check status: $STATUS"
             if [ "$STATUS" = "200" ]; then
               echo "Health check passed!"
