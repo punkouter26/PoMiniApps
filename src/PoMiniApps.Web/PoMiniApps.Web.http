@@ -1,0 +1,51 @@
+@PoMiniApps.Web_HostAddress = https://localhost:7199
+
+### Get all rappers
+GET {{PoMiniApps.Web_HostAddress}}/api/rappers
+Accept: application/json
+
+### Get debate topics
+GET {{PoMiniApps.Web_HostAddress}}/api/topics
+Accept: application/json
+
+### Get news headlines
+GET {{PoMiniApps.Web_HostAddress}}/api/news/headlines
+Accept: application/json
+
+### Get current debate state
+GET {{PoMiniApps.Web_HostAddress}}/api/debate/state
+Accept: application/json
+
+### Reset debate
+POST {{PoMiniApps.Web_HostAddress}}/api/debate/reset
+
+### Translate text to Victorian English
+POST {{PoMiniApps.Web_HostAddress}}/api/translation
+Content-Type: application/json
+
+{
+  "text": "Hey dude, that concert last night was totally awesome! The band was fire and the crowd went absolutely crazy."
+}
+
+### Get available songs
+GET {{PoMiniApps.Web_HostAddress}}/api/lyrics/songs
+Accept: application/json
+
+### Get random lyrics
+GET {{PoMiniApps.Web_HostAddress}}/api/lyrics/random
+Accept: application/json
+
+### Synthesize speech
+POST {{PoMiniApps.Web_HostAddress}}/api/speech/synthesize
+Content-Type: application/json
+
+{
+  "text": "Good morrow, dear friend! I trust this fine day finds you in excellent spirits."
+}
+
+### Run diagnostics
+GET {{PoMiniApps.Web_HostAddress}}/api/diagnostics
+Accept: application/json
+
+### Health check
+GET {{PoMiniApps.Web_HostAddress}}/health

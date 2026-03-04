@@ -1,0 +1,151 @@
+@page "/apps/lingual/leaderboard"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Leaderboard - Lingual Playground - PoMiniApps</PageTitle>
+
+<div class="leaderboard-page">
+    <div class="page-header">
+        <h2 class="page-title">🏆 Rap Battle Leaderboard</h2>
+        <p>Top rappers ranked by wins and performance</p>
+    </div>
+
+    <RadzenCard Style="max-width: 1200px; margin: 0 auto;">
+        @if (_loading)
+        {
+            <RadzenStack AlignItems="AlignItems.Center" Gap="1rem">
+                <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate"
+                                           Size="ProgressBarCircularSize.Large" />
+                <RadzenText TextStyle="TextStyle.Body1">Loading leaderboard...</RadzenText>
+            </RadzenStack>
+        }
+        else if (_rappers is not null && _rappers.Count > 0)
+        {
+            <RadzenDataGrid Data="@_rappers" TItem="RapperRow" AllowSorting="true" AllowPaging="true" PageSize="20"
+                            Style="width: 100%;" AllowColumnResize="true">
+                <Columns>
+                    <RadzenDataGridColumn TItem="RapperRow" Property="Rank" Title="Rank" Width="80px" Sortable="false">
+                        <Template Context="rapper">
+                            <span class="rank-badge rank-@rapper.Rank">@rapper.Rank</span>
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="RapperRow" Property="Name" Title="Rapper" />
+                    <RadzenDataGridColumn TItem="RapperRow" Property="Wins" Title="Wins" Width="100px" />
+                    <RadzenDataGridColumn TItem="RapperRow" Property="Losses" Title="Losses" Width="100px" />
+                    <RadzenDataGridColumn TItem="RapperRow" Property="WinRate" Title="Win Rate" Width="120px"
+                                          FormatString="{0:P0}" />
+                </Columns>
+            </RadzenDataGrid>
+        }
+        else
+        {
+            <RadzenAlert AlertStyle="AlertStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter">
+                No battles recorded yet. Be the first to start a rap battle!
+            </RadzenAlert>
+        }
+
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem" class="rz-mt-4">
+            <RadzenButton Text="Start a Battle" Icon="play_arrow" ButtonStyle="ButtonStyle.Danger"
+                          Click='() => Navigation.NavigateTo("/apps/lingual/rap-battle")' />
+            <RadzenButton Text="Refresh" Icon="refresh" ButtonStyle="ButtonStyle.Light" Click="@LoadLeaderboardAsync"
+                          Disabled="@_loading" />
+        </RadzenStack>
+    </RadzenCard>
+</div>
+
+<style>
+    .leaderboard-page {
+        padding: 1rem;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .rank-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-weight: bold;
+        font-size: 0.9rem;
+    }
+
+    .rank-1 {
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        color: #000;
+    }
+
+    .rank-2 {
+        background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+        color: #000;
+    }
+
+    .rank-3 {
+        background: linear-gradient(135deg, #cd7f32, #e9a56c);
+        color: #fff;
+    }
+
+    .rank-badge:not(.rank-1):not(.rank-2):not(.rank-3) {
+        background: var(--rz-base-200);
+    }
+</style>
+
+@code {
+    private bool _loading = true;
+    private List<RapperRow>? _rappers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadLeaderboardAsync();
+    }
+
+    private async Task LoadLeaderboardAsync()
+    {
+        _loading = true;
+        try
+        {
+            var data = await Http.GetFromJsonAsync<List<RapperData>>("/api/rappers");
+            if (data is not null)
+            {
+                _rappers = data
+                    .OrderByDescending(r => r.Wins)
+                    .ThenBy(r => r.Losses)
+                    .Select((r, i) => new RapperRow
+                    {
+                        Rank = i + 1,
+                        Name = r.Name,
+                        Wins = r.Wins,
+                        Losses = r.Losses,
+                        WinRate = r.Wins + r.Losses > 0 ? (double)r.Wins / (r.Wins + r.Losses) : 0
+                    }).ToList();
+            }
+        }
+        catch
+        {
+            _rappers = [];
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private record RapperData(string Name, int Wins, int Losses);
+    private class RapperRow
+    {
+        public int Rank { get; set; }
+        public string Name { get; set; } = "";
+        public int Wins { get; set; }
+        public int Losses { get; set; }
+        public double WinRate { get; set; }
+    }
+}

@@ -1,40 +1,132 @@
-# PoLingual — Unified Language Playground
+# PoMiniApps — Collection of Mini Applications
 
-A .NET 10 Blazor WebAssembly application that combines **AI-powered rap debates** with **Victorian English translation**, creating a unified language playground.
+A collection of small .NET 10 applications built with Blazor WebAssembly, showcasing various features and technologies with clear separation between apps.
 
-## Features
+## 🏗️ Architecture
 
-### 🎤 Rap Battle Arena
-- AI-generated rap debates between famous rappers using Azure OpenAI (GPT-4o)
-- Real-time debate streaming via SignalR
-- Text-to-speech with distinct voices per rapper (Azure Speech SDK)
-- AI judge with scoring and reasoning
-- Win/loss leaderboard with Azure Table Storage persistence
-
-### 🎩 Victorian English Translator
-- Translates modern English to Victorian-era style using Azure OpenAI
-- Song lyrics library for quick translation demos
-- Text-to-speech with British Victorian voice (Azure Speech REST API)
-- In-memory translation cache for cost optimization
-
-### 🔧 Diagnostics & Health
-- `/health` endpoint with comprehensive health checks
-- `/diag` page for live service diagnostics
-- OpenTelemetry tracing and custom metrics
-
-## Architecture
+The solution is designed to make it easy to add new mini applications while maintaining clear boundaries:
 
 - **Framework**: .NET 10, Unified Blazor (SSR + WASM)
-- **Architecture**: Vertical Slice Architecture (VSA)
-- **UI**: Radzen Blazor components
-- **Data**: Azure Table Storage (Azurite for local dev)
-- **AI**: Azure OpenAI (GPT-4o)
-- **Speech**: Azure Speech SDK + REST API
-- **Real-time**: SignalR
+- **Architecture**: Mini Apps organized in separate folders with shared infrastructure
+- **UI**: Radzen Blazor components with consistent styling
+- **Navigation**: Common navigation frame showing breadcrumbs
 - **Observability**: Serilog + OpenTelemetry + Application Insights
-- **Validation**: FluentValidation
-- **API Docs**: Swagger / OpenAPI
 - **Tests**: xUnit v3, bUnit, FluentAssertions, Moq, Playwright
+
+### Project Structure
+
+```
+src/
+  PoMiniApps.Shared/           # Shared models and contracts
+  PoMiniApps.Web/              # Blazor Server + API backends
+  PoMiniApps.Web.Client/       # Blazor WASM Client
+    Components/
+      Pages/
+        Home.razor             # Main launcher page
+        Diagnostics.razor      # System diagnostics
+      MiniApps/
+        Lingual/               # Lingual Playground mini app
+          Pages/               # App-specific pages
+        Shared/                # Shared mini app components
+      Layout/
+        MainLayout.razor       # Common navigation frame
+tests/
+  PoMiniApps.UnitTests/
+  PoMiniApps.IntegrationTests/
+  PoMiniApps.E2ETests/
+```
+
+## 📱 Current Mini Apps
+
+### 🎤 Lingual Playground
+
+A language-focused mini app with two main features:
+
+**Rap Battle Arena**
+- AI-generated rap debates between famous rappers (Azure OpenAI GPT-4o)
+- Real-time streaming via SignalR
+- Text-to-speech with distinct voices per rapper
+- AI judge with detailed scoring
+- Persistent leaderboard (Azure Table Storage)
+
+**Victorian Translator**
+- Modern English → Victorian-era prose (Azure OpenAI)
+- Song lyrics library for demos
+- British Victorian voice text-to-speech
+- Translation caching for performance
+
+## 🎮 Adding New Mini Apps
+
+The architecture makes it easy to add new mini applications with clear boundaries:
+
+### 1. Create App Folder Structure
+
+```
+src/PoMiniApps.Web.Client/Components/MiniApps/{YourApp}/
+  Pages/
+    Index.razor        # App hub page at /apps/yourapp
+    Feature1.razor     # Feature page at /apps/yourapp/feature1
+    Feature2.razor     # Feature page at /apps/yourapp/feature2
+```
+
+### 2. Register Your App
+
+Add your app to `PoMiniApps.Shared/Models/MiniAppInfo.cs`:
+
+```csharp
+public static class MiniApps
+{
+    public static readonly MiniAppInfo[] All =
+    [
+        // Existing apps...
+        new MiniAppInfo(
+            Id: "yourapp",
+            Name: "Your App Name",
+            Description: "Brief description of your app",
+            Icon: "oi-puzzle-piece",  // Open Iconic icon
+            Route: "/apps/yourapp",
+            Tags: ["tag1", "tag2"],
+            Color: "#6366f1"           // Hex color for the card
+        )
+    ];
+}
+```
+
+### 3. Add Backend Endpoints (if needed)
+
+Create a new endpoints file in `src/PoMiniApps.Web/Endpoints/`:
+
+```csharp
+namespace PoMiniApps.Web.Endpoints;
+
+public static class YourAppEndpoints
+{
+    public static void MapYourAppEndpoints(this IEndpointRouteBuilder app)
+    {
+        var group = app.MapGroup("/api/yourapp")
+            .WithTags("YourApp");
+            
+        group.MapGet("/data", () => Results.Ok(new { data = "example" }));
+    }
+}
+```
+
+Register in `Program.cs`:
+```csharp
+app.MapYourAppEndpoints();
+```
+
+### 4. Navigation
+
+- **Home page**: Automatically shows your app card on `/`
+- **Breadcrumbs**: Automatically show "Home › Your App › Feature" in MainLayout
+- **Routes**: Use pattern `/apps/{appId}/{feature}` for consistency
+
+### 5. Shared Resources
+
+- **Layout**: MainLayout provides common navigation frame
+- **Styles**: Use existing Radzen theme for consistency
+- **Services**: Add shared services to `PoMiniApps.Web/Services/` or `PoMiniApps.Web.Client/Services/`
 
 ## Prerequisites
 
@@ -53,7 +145,7 @@ docker-compose up -d
 ### 2. Configure User Secrets
 
 ```bash
-cd src/PoLingual.Web
+cd src/PoMiniApps.Web
 dotnet user-secrets set "Azure:AzureOpenAIApiKey" "your-key"
 dotnet user-secrets set "Azure:AzureSpeechSubscriptionKey" "your-key"
 dotnet user-secrets set "NewsApi:ApiKey" "your-newsapi-key"
@@ -62,7 +154,7 @@ dotnet user-secrets set "NewsApi:ApiKey" "your-newsapi-key"
 ### 3. Run the Application
 
 ```bash
-dotnet run --project src/PoLingual.Web
+dotnet run --project src/PoMiniApps.Web
 ```
 
 Navigate to `https://localhost:7199`
@@ -71,13 +163,13 @@ Navigate to `https://localhost:7199`
 
 ```bash
 # Unit tests
-dotnet test tests/PoLingual.UnitTests
+dotnet test tests/PoMiniApps.UnitTests
 
 # Integration tests (requires Azurite)
-dotnet test tests/PoLingual.IntegrationTests
+dotnet test tests/PoMiniApps.IntegrationTests
 
 # E2E tests (requires running app)
-cd tests/PoLingual.E2ETests
+cd tests/PoMiniApps.E2ETests
 npm install
 npx playwright install
 npm test
@@ -85,19 +177,28 @@ npm test
 
 ## API Endpoints
 
+Backend API endpoints serve the mini apps (grouped by feature):
+
+### Core
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/health` | Health check with dependency status |
+| GET | `/api/diagnostics` | Run diagnostics for all services |
+
+### Lingual App
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | `/api/rappers` | List all rappers |
 | GET | `/api/topics` | Get debate topics |
-| GET | `/api/news/headlines` | News headlines |
+| GET | `/api/news/headlines` | News headlines for topics |
 | GET | `/api/debate/state` | Current debate state |
 | POST | `/api/debate/reset` | Reset debate |
 | POST | `/api/translation` | Translate to Victorian |
 | GET | `/api/lyrics/songs` | Available songs |
 | GET | `/api/lyrics/random` | Random lyrics |
 | POST | `/api/speech/synthesize` | Text to speech |
-| GET | `/api/diagnostics` | Run diagnostics |
-| GET | `/health` | Health check |
+
+Test endpoints with the `.http` files in `src/PoMiniApps.Web/PoMiniApps.Web.http`
 
 ## Deployment
 
@@ -108,14 +209,34 @@ azd up
 ## Project Structure
 
 ```
-PoLingual/
+PoMiniApps/
 ├── src/
-│   ├── PoLingual.Shared/       # Shared models
-│   ├── PoLingual.Web/          # Blazor Server + API
-│   └── PoLingual.Web.Client/   # Blazor WASM Client
+│   ├── PoMiniApps.Shared/              # Shared models and contracts
+│   │   └── Models/
+│   │       └── MiniAppInfo.cs          # Mini app registry
+│   ├── PoMiniApps.Web/                 # Blazor Server + API backends
+│   │   ├── Endpoints/                  # API endpoints by feature
+│   │   ├── Services/                   # Backend services
+│   │   ├── HealthChecks/               # Custom health checks
+│   │   └── Components/
+│   │       └── Pages/
+│   │           ├── Home.razor          # App launcher
+│   │           └── Diagnostics.razor   # System diagnostics
+│   └── PoMiniApps.Web.Client/          # Blazor WASM Client
+│       └── Components/
+│           ├── Layout/
+│           │   └── MainLayout.razor    # Common navigation frame
+│           └── MiniApps/
+│               ├── Shared/             # Shared components
+│               └── Lingual/            # Lingual mini app
+│                   └── Pages/
+│                       ├── Index.razor
+│                       ├── RapBattle.razor
+│                       ├── VictorianTranslator.razor
+│                       └── Leaderboard.razor
 ├── tests/
-│   ├── PoLingual.UnitTests/
-│   ├── PoLingual.IntegrationTests/
-│   └── PoLingual.E2ETests/
-└── infra/                      # Bicep templates
+│   ├── PoMiniApps.UnitTests/
+│   ├── PoMiniApps.IntegrationTests/
+│   └── PoMiniApps.E2ETests/
+└── infra/                              # Azure Bicep templates
 ```

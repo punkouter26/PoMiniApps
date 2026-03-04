@@ -4,19 +4,19 @@ param location string
 @description('Environment name')
 param environmentName string
 
-@description('Name of the existing App Service Plan in PoLingual resource group')
-param existingAppServicePlanName string = 'asp-polingual'
+@description('Name of the existing App Service Plan in PoMiniApps resource group')
+param existingAppServicePlanName string = 'asp-PoMiniApps-dev'
 
 @description('Resource group of the shared resources')
-param sharedResourceGroupName string = 'poshared'
+param sharedResourceGroupName string = 'PoShared'
 
-@description('Name of the existing Log Analytics Workspace in poshared')
+@description('Name of the existing Log Analytics Workspace in PoShared')
 param existingLogAnalyticsName string = 'PoShared-LogAnalytics'
 
-@description('Name of the existing Application Insights in poshared')
-param existingAppInsightsName string = 'poappideinsights8f9c9a4e'
+@description('Name of the existing Application Insights in PoShared')
+param existingAppInsightsName string = 'appi-PoShared'
 
-// ── Reference existing shared resources from poshared resource group ─────────
+// ── Reference existing shared resources from PoShared resource group ─────────
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' existing = {
   name: existingAppServicePlanName
 }
@@ -28,7 +28,7 @@ resource sharedAppInsights 'Microsoft.Insights/components@2020-02-02' existing =
 
 // ── Web App (app-specific) ───────────────────────────────────────────────────
 resource webApp 'Microsoft.Web/sites@2022-03-01' = {
-  name: 'app-polingual'
+  name: 'app-pominiapps'
   location: location
   identity: {
     type: 'SystemAssigned'
@@ -56,6 +56,10 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
           value: sharedAppInsights.properties.ConnectionString
         }
+        {
+          name: 'Azure__PoShared__ApplicationInsights__ConnectionString'
+          value: sharedAppInsights.properties.ConnectionString
+        }
       ]
     }
   }
@@ -63,7 +67,7 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
 
 // ── Storage Account (Table Storage — app-specific) ───────────────────────────
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
-  name: 'stpolingual26'
+  name: 'stpominiapps26'
   location: location
   sku: {
     name: 'Standard_LRS'

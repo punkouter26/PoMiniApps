@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PoMiniApps.Shared/PoMiniApps.Shared.csproj" />
+    <Project Path="src/PoMiniApps.Web.Client/PoMiniApps.Web.Client.csproj" />
+    <Project Path="src/PoMiniApps.Web/PoMiniApps.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PoMiniApps.IntegrationTests/PoMiniApps.IntegrationTests.csproj" />
+    <Project Path="tests/PoMiniApps.UnitTests/PoMiniApps.UnitTests.csproj" />
+  </Folder>
+</Solution>

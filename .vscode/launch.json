@@ -2,17 +2,31 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "PoLingual.Web (Server)",
+      "name": "PoMiniApps (Watch Mode - Edge)",
+      "type": "coreclr",
+      "request": "attach",
+      "preLaunchTask": "f5-launch-edge",
+      "stopAtEntry": false,
+      "console": "integratedTerminal",
+      "serverReadyAction": {
+        "pattern": "listening on.*http://localhost:5000",
+        "uriFormat": "http://localhost:5000",
+        "action": "openExternally",
+        "browser": "edge"
+      }
+    },
+    {
+      "name": "PoMiniApps.Web (Server)",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build-server",
-      "program": "${workspaceFolder}/src/PoLingual.Web/bin/Debug/net10.0/PoLingual.Web.dll",
+      "program": "${workspaceFolder}/src/PoMiniApps.Web/bin/Debug/net10.0/PoMiniApps.Web.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/PoLingual.Web",
+      "cwd": "${workspaceFolder}/src/PoMiniApps.Web",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "https://localhost:7083;http://localhost:5083"
+        "ASPNETCORE_URLS": "https://localhost:5001;http://localhost:5000"
       },
       "sourceFileMap": {
         "/Views": "${workspaceFolder}/Views"
@@ -20,25 +34,25 @@
       "console": "integratedTerminal"
     },
     {
-      "name": "PoLingual.Web.Client (Blazor WASM)",
+      "name": "PoMiniApps.Web.Client (Blazor WASM)",
       "type": "blazorwasm",
       "request": "launch",
-      "cwd": "${workspaceFolder}/src/PoLingual.Web.Client",
+      "cwd": "${workspaceFolder}/src/PoMiniApps.Web.Client",
       "browser": "edge"
     }
   ],
   "compounds": [
     {
-      "name": "PoLingual (Full Stack)",
+      "name": "PoMiniApps (Full Stack)",
       "configurations": [
-        "PoLingual.Web (Server)",
-        "PoLingual.Web.Client (Blazor WASM)"
+        "PoMiniApps.Web (Server)",
+        "PoMiniApps.Web.Client (Blazor WASM)"
       ],
       "preLaunchTask": "cleanup-dotnet-processes",
       "stopAll": true,
       "presentation": {
         "hidden": false,
-        "group": "PoLingual",
+        "group": "PoMiniApps",
         "order": 1
       }
     }

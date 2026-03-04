@@ -7,8 +7,8 @@ on:
 
 env:
   DOTNET_VERSION: '10.0.x'
-  APP_NAME: 'app-polingual'
-  AZURE_RESOURCE_GROUP: 'PoLingual'
+  APP_NAME: 'app-pominiapps'
+  AZURE_RESOURCE_GROUP: 'PoMiniApps'
 
 jobs:
   build-and-test:
@@ -22,21 +22,21 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore dependencies
-        run: dotnet restore PoLingual.slnx
+        run: dotnet restore PoMiniApps.slnx
 
       - name: Build solution
-        run: dotnet build PoLingual.slnx --configuration Release --no-restore
+        run: dotnet build PoMiniApps.slnx --configuration Release --no-restore
 
       - name: Run unit tests
-        run: dotnet test tests/PoLingual.UnitTests --configuration Release --no-build --verbosity normal
+        run: dotnet test tests/PoMiniApps.UnitTests --configuration Release --no-build --verbosity normal
 
       - name: Publish web app
-        run: dotnet publish src/PoLingual.Web/PoLingual.Web.csproj --configuration Release --output ./publish
+        run: dotnet publish src/PoMiniApps.Web/PoMiniApps.Web.csproj --configuration Release --output ./publish
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: polingual-app
+          name: pominiapps-app
           path: ./publish
 
   deploy:
@@ -50,7 +50,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: polingual-app
+          name: pominiapps-app
           path: ./publish
 
       - name: Login to Azure
@@ -65,7 +65,7 @@ jobs:
         with:
           app-name: ${{ env.APP_NAME }}
           package: ./publish
-          startup-command: 'dotnet PoLingual.Web.dll'
+          startup-command: 'dotnet PoMiniApps.Web.dll'
 
       - name: Health check
         continue-on-error: true

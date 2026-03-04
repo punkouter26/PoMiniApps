@@ -1,0 +1,134 @@
+@page "/apps/lingual"
+@layout MiniAppLayout
+@rendermode InteractiveWebAssembly
+@inject NavigationManager Navigation
+
+<PageTitle>Lingual Playground - PoMiniApps</PageTitle>
+
+<div class="lingual-hub">
+    <div class="app-header">
+        <h1 class="app-title">🎤 Lingual Playground</h1>
+        <p class="app-description">AI-powered language experiences with rap battles and Victorian translation</p>
+    </div>
+
+    <RadzenStack Gap="2rem" Style="max-width: 1200px; margin: 2rem auto;">
+        <RadzenRow Gap="2rem">
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenCard class="feature-card rap-feature" @onclick='() => Navigation.NavigateTo("/apps/lingual/rap-battle")'>
+                    <RadzenStack Gap="1rem">
+                        <div class="feature-icon">🎙️</div>
+                        <RadzenText TextStyle="TextStyle.H5" class="feature-title">Rap Battle Arena</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body2" class="feature-description">
+                            Watch legendary rappers face off in AI-generated rap battles. Pick your rappers,
+                            choose a topic from the latest news, and let the AI deliver fire bars with
+                            real-time text-to-speech delivery.
+                        </RadzenText>
+                        <div class="feature-tags">
+                            <RadzenBadge Text="Azure OpenAI" Variant="Variant.Filled" IsPill="true" />
+                            <RadzenBadge Text="Speech" Variant="Variant.Filled" IsPill="true" />
+                            <RadzenBadge Text="SignalR" Variant="Variant.Filled" IsPill="true" />
+                            <RadzenBadge Text="AI Judging" Variant="Variant.Filled" IsPill="true" />
+                        </div>
+                        <RadzenButton Text="Enter Arena" Icon="play_arrow" ButtonStyle="ButtonStyle.Danger" Style="align-self: flex-start;" />
+                    </RadzenStack>
+                </RadzenCard>
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="6">
+                <RadzenCard class="feature-card victorian-feature" @onclick='() => Navigation.NavigateTo("/apps/lingual/victorian-translator")'>
+                    <RadzenStack Gap="1rem">
+                        <div class="feature-icon">🎩</div>
+                        <RadzenText TextStyle="TextStyle.H5" class="feature-title">Victorian Translator</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body2" class="feature-description">
+                            Transform modern English into elegant Victorian-era prose. Load Cockney rhyming
+                            slang lyrics, type your own text, or generate random content — then hear it
+                            spoken aloud in a proper British accent.
+                        </RadzenText>
+                        <div class="feature-tags">
+                            <RadzenBadge Text="AI Translation" Variant="Variant.Filled" IsPill="true" />
+                            <RadzenBadge Text="Lyrics Library" Variant="Variant.Filled" IsPill="true" />
+                            <RadzenBadge Text="British TTS" Variant="Variant.Filled" IsPill="true" />
+                        </div>
+                        <RadzenButton Text="Start Translating" Icon="translate" ButtonStyle="ButtonStyle.Primary" Style="align-self: flex-start;" />
+                    </RadzenStack>
+                </RadzenCard>
+            </RadzenColumn>
+        </RadzenRow>
+
+        <RadzenRow>
+            <RadzenColumn>
+                <RadzenCard>
+                    <RadzenStack Gap="1rem">
+                        <RadzenText TextStyle="TextStyle.H6">Quick Access</RadzenText>
+                        <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem" Wrap="FlexWrap.Wrap">
+                            <RadzenButton Text="🏆 Leaderboard" Click='() => Navigation.NavigateTo("/apps/lingual/leaderboard")' 
+                                          ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Outlined" />
+                            <RadzenButton Text="🔧 Diagnostics" Click='() => Navigation.NavigateTo("/diagnostics")' 
+                                          ButtonStyle="ButtonStyle.Light" Variant="Variant.Outlined" />
+                        </RadzenStack>
+                    </RadzenStack>
+                </RadzenCard>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenStack>
+</div>
+
+<style>
+    .lingual-hub {
+        padding: 1rem;
+    }
+
+    .app-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .app-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 0;
+        color: var(--rz-text-color);
+    }
+
+    .app-description {
+        font-size: 1.1rem;
+        color: var(--rz-text-secondary-color);
+        margin: 0.5rem 0 0 0;
+    }
+
+    .feature-card {
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        height: 100%;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+
+    .feature-icon {
+        font-size: 3rem;
+    }
+
+    .feature-title {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .feature-description {
+        color: var(--rz-text-secondary-color);
+        line-height: 1.6;
+    }
+
+    .feature-tags {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+    }
+</style>
+
+@code {
+
+}

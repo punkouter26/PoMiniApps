@@ -11,7 +11,7 @@
         "**/obj": true,
         "**/logs": true
     },
-    "dotnet.defaultSolution": "PoLingual.slnx",
+    "dotnet.defaultSolution": "PoMiniApps.slnx",
     "csharp.debug.console": "integratedTerminal",
     "files.associations": {
         "*.bicep": "bicep"
