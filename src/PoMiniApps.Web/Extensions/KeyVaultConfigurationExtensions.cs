@@ -10,36 +10,45 @@ public static class KeyVaultConfigurationExtensions
 {
     public static IConfigurationBuilder AddPoMiniGamesKeyVault(this IConfigurationBuilder builder, IConfiguration currentConfig)
     {
-        // Temporarily skip Key Vault in non-Development environments due to managed identity timeouts
-        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        if (environment != "Development")
-        {
-            Console.WriteLine("[INFO] Key Vault disabled in production - using app settings/environment variables");
-            return builder;
-        }
-
         var keyVaultName =
             currentConfig["PoMiniApps:Azure:KeyVault:Name"]
             ?? currentConfig["Azure:KeyVault:Name"]
             ?? currentConfig["Azure:KeyVaultName"];
-        if (!string.IsNullOrWhiteSpace(keyVaultName))
+        
+        // Skip Key Vault in production/Azure - use environment variables and app settings instead
+        // This avoids managed identity timeout issues
+        if (string.IsNullOrWhiteSpace(keyVaultName) || !IsLocalDevelopment())
         {
-            try
+            if (!IsLocalDevelopment())
             {
-                var kvUri = new Uri($"https://{keyVaultName}.vault.azure.net/");
-                builder.AddAzureKeyVault(kvUri, new DefaultAzureCredential());
-                Console.WriteLine($"[INFO] Connected to Key Vault: {keyVaultName}");
+                Console.WriteLine("[INFO] Key Vault skipped in Azure - using app settings and environment variables");
             }
-            catch (Exception ex)
-            {
-                // Log but don't crash — app continues with local/env config
-                Console.WriteLine($"[WARN] Key Vault '{keyVaultName}' not accessible: {ex.Message}");
-            }
+            return builder;
         }
-        else
+
+        // Only load Key Vault in local development
+        try
         {
-            Console.WriteLine("[INFO] No Key Vault configured (Azure:KeyVault:Name not set)");
+            var kvUri = new Uri($"https://{keyVaultName}.vault.azure.net/");
+            builder.AddAzureKeyVault(kvUri, new DefaultAzureCredential());
+            Console.WriteLine($"[INFO] Connected to Key Vault: {keyVaultName}");
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[WARN] Key Vault '{keyVaultName}' not accessible: {ex.Message}");
+        }
+
         return builder;
+    }
+
+    private static bool IsLocalDevelopment()
+    {
+        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        return env == "Development" || string.IsNullOrEmpty(env) && !IsRunningInAzure();
+    }
+
+    private static bool IsRunningInAzure()
+    {
+        return Environment.GetEnvironmentVariable("WEBSITE_INSTANCE_ID") != null;
     }
 }

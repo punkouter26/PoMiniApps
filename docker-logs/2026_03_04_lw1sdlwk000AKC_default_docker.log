@@ -1,0 +1,294 @@
+2026-03-04T14:29:35.0555395Z    _____                               
+2026-03-04T14:29:35.0566513Z   /  _  \ __________ _________   ____  
+2026-03-04T14:29:35.0566695Z  /  /_\  \\___   /  |  \_  __ \_/ __ \ 
+2026-03-04T14:29:35.0566742Z /    |    \/    /|  |  /|  | \/\  ___/ 
+2026-03-04T14:29:35.0566782Z \____|__  /_____ \____/ |__|    \___  >
+2026-03-04T14:29:35.0566831Z         \/      \/                  \/ 
+2026-03-04T14:29:35.0566874Z A P P   S E R V I C E   O N   L I N U X
+2026-03-04T14:29:35.0566943Z 
+2026-03-04T14:29:35.0566987Z Documentation       : http://aka.ms/webapp-linux
+2026-03-04T14:29:35.0567030Z Dotnet quickstart   : https://aka.ms/dotnet-qs
+2026-03-04T14:29:35.0567070Z ASP .NETCore Version: 10.0.2
+2026-03-04T14:29:35.0567108Z Instance Name       : lw1sdlwk000AKC
+2026-03-04T14:29:35.0567153Z Instance Id         : 14081d20018b15b1623fc720b48f16fa62465e5170c988d77c1ce70393fc7d40
+2026-03-04T14:29:35.0635636Z 
+2026-03-04T14:29:35.0635928Z Note: Any data outside '/home' is not persisted
+2026-03-04T14:31:13.9647325Z  * Starting OpenBSD Secure Shell server sshd
+2026-03-04T14:31:14.1861364Z    ...done.
+2026-03-04T14:31:14.3469304Z WEBSITES_INCLUDE_CLOUD_CERTS is not set to true.
+2026-03-04T14:31:14.6383542Z Updating certificates in /etc/ssl/certs...
+2026-03-04T14:41:23.2085581Z    _____                               
+2026-03-04T14:41:23.2088190Z   /  _  \ __________ _________   ____  
+2026-03-04T14:41:23.2088309Z  /  /_\  \\___   /  |  \_  __ \_/ __ \ 
+2026-03-04T14:41:23.2088441Z /    |    \/    /|  |  /|  | \/\  ___/ 
+2026-03-04T14:41:23.2088510Z \____|__  /_____ \____/ |__|    \___  >
+2026-03-04T14:41:23.2088586Z         \/      \/                  \/ 
+2026-03-04T14:41:23.2088653Z A P P   S E R V I C E   O N   L I N U X
+2026-03-04T14:41:23.2088715Z 
+2026-03-04T14:41:23.2088789Z Documentation       : http://aka.ms/webapp-linux
+2026-03-04T14:41:23.2088889Z Dotnet quickstart   : https://aka.ms/dotnet-qs
+2026-03-04T14:41:23.2088959Z ASP .NETCore Version: 10.0.2
+2026-03-04T14:41:23.2089025Z Instance Name       : lw1sdlwk000AKC
+2026-03-04T14:41:23.2089098Z Instance Id         : 14081d20018b15b1623fc720b48f16fa62465e5170c988d77c1ce70393fc7d40
+2026-03-04T14:41:23.2089162Z 
+2026-03-04T14:41:23.2089228Z Note: Any data outside '/home' is not persisted
+2026-03-04T14:41:42.3878672Z  * Starting OpenBSD Secure Shell server sshd
+2026-03-04T14:41:42.7463892Z    ...done.
+2026-03-04T14:41:43.2093744Z WEBSITES_INCLUDE_CLOUD_CERTS is not set to true.
+2026-03-04T14:41:43.7516302Z Updating certificates in /etc/ssl/certs...
+2026-03-04T14:44:43.6629038Z rehash: warning: skipping duplicate certificate in SSLcom-TLS-Root-2022-ECC.pem
+2026-03-04T14:44:43.6764344Z rehash: warning: skipping duplicate certificate in SSLcom-TLS-Root-2022-RSA.pem
+2026-03-04T14:44:44.8829795Z rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+2026-03-04T14:44:45.1218760Z 4 added, 0 removed; done.
+2026-03-04T14:44:45.1230977Z Running hooks in /etc/ca-certificates/update.d...
+2026-03-04T14:44:45.1711272Z done.
+2026-03-04T14:44:45.3423153Z CA certificates copied and updated successfully.
+2026-03-04T14:44:46.6999938Z  * Starting periodic command scheduler cron
+2026-03-04T14:44:47.1318140Z    ...done.
+2026-03-04T14:44:47.1518426Z Running oryx create-script -appPath /home/site/wwwroot -output /opt/startup/startup.sh -defaultAppFilePath /defaulthome/hostingstart/hostingstart.dll     -bindPort 8080 -bindPort2 '' -userStartupCommand 'dotnet PoMiniApps.Web.dll' 
+2026-03-04T14:44:48.1204073Z Could not find build manifest file at '/home/site/wwwroot/oryx-manifest.toml'
+2026-03-04T14:44:48.1204529Z Could not find operation ID in manifest. Generating an operation id...
+2026-03-04T14:44:48.1389962Z Build Operation ID: 1cdff02e-9c47-4c10-8551-558b78b7723e
+2026-03-04T14:44:51.7721362Z 
+2026-03-04T14:44:51.9019906Z Agent extension 
+2026-03-04T14:44:51.9020480Z Before if loop >> DotNet Runtime 
+2026-03-04T14:44:51.9020585Z DotNet Runtime 10.0Writing output script to '/opt/startup/startup.sh'
+2026-03-04T14:44:52.5267544Z Running user provided startup command...
+2026-03-04T14:45:11.1829002Z [14:45:08 INF] Starting PoMiniApps application
+2026-03-04T14:49:21.9639463Z    _____                               
+2026-03-04T14:49:21.9639823Z   /  _  \ __________ _________   ____  
+2026-03-04T14:49:21.9639859Z  /  /_\  \\___   /  |  \_  __ \_/ __ \ 
+2026-03-04T14:49:21.9639890Z /    |    \/    /|  |  /|  | \/\  ___/ 
+2026-03-04T14:49:21.9639921Z \____|__  /_____ \____/ |__|    \___  >
+2026-03-04T14:49:21.9639949Z         \/      \/                  \/ 
+2026-03-04T14:49:21.9639977Z A P P   S E R V I C E   O N   L I N U X
+2026-03-04T14:49:21.9640004Z 
+2026-03-04T14:49:21.9640034Z Documentation       : http://aka.ms/webapp-linux
+2026-03-04T14:49:21.9640064Z Dotnet quickstart   : https://aka.ms/dotnet-qs
+2026-03-04T14:49:21.9640093Z ASP .NETCore Version: 10.0.2
+2026-03-04T14:49:21.9640142Z Instance Name       : lw1sdlwk000AKC
+2026-03-04T14:49:21.9640178Z Instance Id         : 14081d20018b15b1623fc720b48f16fa62465e5170c988d77c1ce70393fc7d40
+2026-03-04T14:49:21.9640204Z 
+2026-03-04T14:49:21.9640234Z Note: Any data outside '/home' is not persisted
+2026-03-04T14:49:32.2818567Z  * Starting OpenBSD Secure Shell server sshd
+2026-03-04T14:49:32.3727906Z    ...done.
+2026-03-04T14:49:32.4132192Z WEBSITES_INCLUDE_CLOUD_CERTS is not set to true.
+2026-03-04T14:49:32.7297528Z Updating certificates in /etc/ssl/certs...
+2026-03-04T14:51:24.5274715Z rehash: warning: skipping duplicate certificate in SSLcom-TLS-Root-2022-ECC.pem
+2026-03-04T14:51:24.5799109Z rehash: warning: skipping duplicate certificate in SSLcom-TLS-Root-2022-RSA.pem
+2026-03-04T14:51:27.0276971Z rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+2026-03-04T14:51:27.1782539Z 4 added, 0 removed; done.
+2026-03-04T14:51:27.1869376Z Running hooks in /etc/ca-certificates/update.d...
+2026-03-04T14:51:27.2484069Z done.
+2026-03-04T14:51:27.3478523Z CA certificates copied and updated successfully.
+2026-03-04T14:51:27.9882481Z  * Starting periodic command scheduler cron
+2026-03-04T14:51:28.0294904Z    ...done.
+2026-03-04T14:51:28.1053329Z Running oryx create-script -appPath /home/site/wwwroot -output /opt/startup/startup.sh -defaultAppFilePath /defaulthome/hostingstart/hostingstart.dll     -bindPort 8080 -bindPort2 '' -userStartupCommand 'dotnet PoMiniApps.Web.dll' 
+2026-03-04T14:51:28.6991402Z Could not find build manifest file at '/home/site/wwwroot/oryx-manifest.toml'
+2026-03-04T14:51:28.7030387Z Could not find operation ID in manifest. Generating an operation id...
+2026-03-04T14:51:28.7217030Z Build Operation ID: c7b8a070-7755-4f0f-9013-0804259a6def
+2026-03-04T14:51:29.3212313Z 
+2026-03-04T14:51:29.3320233Z Agent extension 
+2026-03-04T14:51:29.3320524Z Before if loop >> DotNet Runtime 
+2026-03-04T14:51:29.3581343Z DotNet Runtime 10.0Writing output script to '/opt/startup/startup.sh'
+2026-03-04T14:51:29.4908075Z Running user provided startup command...
+2026-03-04T14:51:33.2132077Z [14:51:32 INF] Starting PoMiniApps application
+2026-03-04T14:52:13.8728022Z [WARN] Key Vault 'kv-poshared' not accessible: The user, group or application 'appid=4008b3ed-6be8-44f0-ad06-16380de8573f;oid=70ecea1b-b7d7-45c4-bfbd-dc1389a22e86;iss=https://sts.windows.net/1639b208-d5bf-4d71-9096-06163884a5e4/' does not have secrets list permission on key vault 'kv-poshared;location=eastus'. For help resolving this issue, please see https://go.microsoft.com/fwlink/?linkid=2125287
+2026-03-04T14:52:13.8728428Z Status: 403 (Forbidden)
+2026-03-04T14:52:13.8728571Z ErrorCode: Forbidden
+2026-03-04T14:52:13.8728602Z 
+2026-03-04T14:52:13.8728632Z Content:
+2026-03-04T14:52:13.8744569Z {"error":{"code":"Forbidden","message":"The user, group or application 'appid=4008b3ed-6be8-44f0-ad06-16380de8573f;oid=70ecea1b-b7d7-45c4-bfbd-dc1389a22e86;iss=https://sts.windows.net/1639b208-d5bf-4d71-9096-06163884a5e4/' does not have secrets list permission on key vault 'kv-poshared;location=eastus'. For help resolving this issue, please see https://go.microsoft.com/fwlink/?linkid=2125287","innererror":{"code":"AccessDenied"}}}
+2026-03-04T14:52:13.8744774Z 
+2026-03-04T14:52:13.8744807Z Headers:
+2026-03-04T14:52:13.8744869Z Cache-Control: no-cache
+2026-03-04T14:52:13.8744899Z Pragma: no-cache
+2026-03-04T14:52:13.8744928Z x-ms-keyvault-region: eastus
+2026-03-04T14:52:13.8924308Z x-ms-client-request-id: e23bb0ae-c168-464a-8b00-24dacea0ddba
+2026-03-04T14:52:13.8924623Z x-ms-request-id: 60fb283c-eff7-4eb3-9757-21e56afb5bf9
+2026-03-04T14:52:13.8924661Z x-ms-keyvault-service-version: 1.9.3070.1
+2026-03-04T14:52:13.8924790Z x-ms-keyvault-network-info: conn_type=Ipv4;addr=40.64.96.235;act_addr_fam=InterNetwork;
+2026-03-04T14:52:13.8924821Z X-Content-Type-Options: REDACTED
+2026-03-04T14:52:13.9326879Z Strict-Transport-Security: REDACTED
+2026-03-04T14:52:13.9327154Z Date: Wed, 04 Mar 2026 14:52:11 GMT
+2026-03-04T14:52:13.9327254Z Content-Type: application/json; charset=utf-8
+2026-03-04T14:52:13.9327312Z Expires: -1
+2026-03-04T14:52:13.9327340Z Content-Length: 434
+2026-03-04T14:52:13.9327366Z 
+2026-03-04T14:53:06.3188406Z [14:53:05 INF] Retrieved 10 rappers from Table Storage {"SourceContext": "PoMiniApps.Web.Services.Data.RapperRepository", "Application": "PoMiniApps", "Environment": "Production"}
+2026-03-04T14:53:09.1673453Z [14:53:08 INF] Rappers already exist. Skipping seeding. {"SourceContext": "PoMiniApps.Web.Services.Data.RapperRepository", "Application": "PoMiniApps", "Environment": "Production"}
+2026-03-04T14:53:09.2574730Z [14:53:09 INF] Data seeding completed successfully {"Application": "PoMiniApps", "Environment": "Production"}
+2026-03-04T16:08:30.6461284Z    _____                               
+2026-03-04T16:08:30.6779258Z   /  _  \ __________ _________   ____  
+2026-03-04T16:08:30.6779424Z  /  /_\  \\___   /  |  \_  __ \_/ __ \ 
+2026-03-04T16:08:30.6779534Z /    |    \/    /|  |  /|  | \/\  ___/ 
+2026-03-04T16:08:30.6779587Z \____|__  /_____ \____/ |__|    \___  >
+2026-03-04T16:08:30.6779638Z         \/      \/                  \/ 
+2026-03-04T16:08:30.6779688Z A P P   S E R V I C E   O N   L I N U X
+2026-03-04T16:08:30.6779736Z 
+2026-03-04T16:08:30.6779789Z Documentation       : http://aka.ms/webapp-linux
+2026-03-04T16:08:30.6779842Z Dotnet quickstart   : https://aka.ms/dotnet-qs
+2026-03-04T16:08:30.6779893Z ASP .NETCore Version: 10.0.2
+2026-03-04T16:08:30.6779947Z Instance Name       : lw1sdlwk000AKC
+2026-03-04T16:08:30.6780020Z Instance Id         : 14081d20018b15b1623fc720b48f16fa62465e5170c988d77c1ce70393fc7d40
+2026-03-04T16:08:30.6780066Z 
+2026-03-04T16:08:30.6780143Z Note: Any data outside '/home' is not persisted
+2026-03-04T16:09:11.2934931Z  * Starting OpenBSD Secure Shell server sshd
+2026-03-04T16:09:11.3881827Z    ...done.
+2026-03-04T16:09:11.4569250Z WEBSITES_INCLUDE_CLOUD_CERTS is not set to true.
+2026-03-04T16:09:11.7864030Z Updating certificates in /etc/ssl/certs...
+2026-03-04T16:11:16.3444221Z rehash: warning: skipping duplicate certificate in SSLcom-TLS-Root-2022-ECC.pem
+2026-03-04T16:11:16.3507940Z rehash: warning: skipping duplicate certificate in SSLcom-TLS-Root-2022-RSA.pem
+2026-03-04T16:11:18.1467806Z rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+2026-03-04T16:11:18.4857527Z 4 added, 0 removed; done.
+2026-03-04T16:11:18.4857929Z Running hooks in /etc/ca-certificates/update.d...
+2026-03-04T16:11:18.5030113Z done.
+2026-03-04T16:11:18.5535516Z CA certificates copied and updated successfully.
+2026-03-04T16:11:19.0466220Z  * Starting periodic command scheduler cron
+2026-03-04T16:11:19.3693685Z    ...done.
+2026-03-04T16:11:19.3796119Z Running oryx create-script -appPath /home/site/wwwroot -output /opt/startup/startup.sh -defaultAppFilePath /defaulthome/hostingstart/hostingstart.dll     -bindPort 8080 -bindPort2 '' -userStartupCommand 'dotnet PoMiniApps.Web.dll' 
+2026-03-04T16:11:20.0962917Z Could not find build manifest file at '/home/site/wwwroot/oryx-manifest.toml'
+2026-03-04T16:11:20.0966778Z Could not find operation ID in manifest. Generating an operation id...
+2026-03-04T16:11:20.1055338Z Build Operation ID: d4633007-3b2f-4be0-8389-a8a3c54e0676
+2026-03-04T16:11:21.5761031Z 
+2026-03-04T16:11:21.5960330Z Agent extension 
+2026-03-04T16:11:21.5960708Z Before if loop >> DotNet Runtime 
+2026-03-04T16:11:21.6217048Z DotNet Runtime 10.0Writing output script to '/opt/startup/startup.sh'
+2026-03-04T16:11:21.9008153Z Running user provided startup command...
+2026-03-04T16:11:29.0789956Z [16:11:27 INF] Starting PoMiniApps application
+2026-03-04T16:16:21.6164672Z    _____                               
+2026-03-04T16:16:21.6165091Z   /  _  \ __________ _________   ____  
+2026-03-04T16:16:21.6165154Z  /  /_\  \\___   /  |  \_  __ \_/ __ \ 
+2026-03-04T16:16:21.6165206Z /    |    \/    /|  |  /|  | \/\  ___/ 
+2026-03-04T16:16:21.6165258Z \____|__  /_____ \____/ |__|    \___  >
+2026-03-04T16:16:21.6165312Z         \/      \/                  \/ 
+2026-03-04T16:16:21.6165364Z A P P   S E R V I C E   O N   L I N U X
+2026-03-04T16:16:21.6165415Z 
+2026-03-04T16:16:21.6165469Z Documentation       : http://aka.ms/webapp-linux
+2026-03-04T16:16:21.6165521Z Dotnet quickstart   : https://aka.ms/dotnet-qs
+2026-03-04T16:16:21.6165573Z ASP .NETCore Version: 10.0.2
+2026-03-04T16:16:21.6165651Z Instance Name       : lw1sdlwk000AKC
+2026-03-04T16:16:21.6165712Z Instance Id         : 14081d20018b15b1623fc720b48f16fa62465e5170c988d77c1ce70393fc7d40
+2026-03-04T16:16:21.6165759Z 
+2026-03-04T16:16:21.6165812Z Note: Any data outside '/home' is not persisted
+2026-03-04T16:16:26.8337078Z  * Starting OpenBSD Secure Shell server sshd
+2026-03-04T16:16:26.9938507Z    ...done.
+2026-03-04T16:16:27.0423872Z WEBSITES_INCLUDE_CLOUD_CERTS is not set to true.
+2026-03-04T16:16:27.2447317Z Updating certificates in /etc/ssl/certs...
+2026-03-04T16:18:51.5793599Z rehash: warning: skipping duplicate certificate in SSLcom-TLS-Root-2022-ECC.pem
+2026-03-04T16:18:51.6468131Z rehash: warning: skipping duplicate certificate in SSLcom-TLS-Root-2022-RSA.pem
+2026-03-04T16:18:53.9682200Z rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+2026-03-04T16:18:54.5042481Z 4 added, 0 removed; done.
+2026-03-04T16:18:54.5920845Z Running hooks in /etc/ca-certificates/update.d...
+2026-03-04T16:18:54.6587973Z done.
+2026-03-04T16:18:54.7075067Z CA certificates copied and updated successfully.
+2026-03-04T16:18:56.0649536Z  * Starting periodic command scheduler cron
+2026-03-04T16:18:56.3348155Z    ...done.
+2026-03-04T16:18:56.3351950Z Running oryx create-script -appPath /home/site/wwwroot -output /opt/startup/startup.sh -defaultAppFilePath /defaulthome/hostingstart/hostingstart.dll     -bindPort 8080 -bindPort2 '' -userStartupCommand 'dotnet PoMiniApps.Web.dll' 
+2026-03-04T16:18:58.3157749Z Could not find build manifest file at '/home/site/wwwroot/oryx-manifest.toml'
+2026-03-04T16:18:58.3158259Z Could not find operation ID in manifest. Generating an operation id...
+2026-03-04T16:18:58.3158327Z Build Operation ID: f2f62379-2c35-45f3-98c4-42c1febf73d9
+2026-03-04T16:19:01.1508703Z 
+2026-03-04T16:19:01.1526472Z Agent extension 
+2026-03-04T16:19:01.1542403Z Before if loop >> DotNet Runtime 
+2026-03-04T16:19:01.2323453Z DotNet Runtime 10.0Writing output script to '/opt/startup/startup.sh'
+2026-03-04T16:19:01.4759400Z Running user provided startup command...
+2026-03-04T16:19:05.0074954Z [16:19:04 INF] Starting PoMiniApps application
+2026-03-04T16:19:45.3748979Z [WARN] Key Vault 'kv-poshared' not accessible: The user, group or application 'appid=4008b3ed-6be8-44f0-ad06-16380de8573f;oid=70ecea1b-b7d7-45c4-bfbd-dc1389a22e86;iss=https://sts.windows.net/1639b208-d5bf-4d71-9096-06163884a5e4/' does not have secrets list permission on key vault 'kv-poshared;location=eastus'. For help resolving this issue, please see https://go.microsoft.com/fwlink/?linkid=2125287
+2026-03-04T16:19:45.3749753Z Status: 403 (Forbidden)
+2026-03-04T16:19:45.3749816Z ErrorCode: Forbidden
+2026-03-04T16:19:45.3749866Z 
+2026-03-04T16:19:45.3749917Z Content:
+2026-03-04T16:19:45.3750009Z {"error":{"code":"Forbidden","message":"The user, group or application 'appid=4008b3ed-6be8-44f0-ad06-16380de8573f;oid=70ecea1b-b7d7-45c4-bfbd-dc1389a22e86;iss=https://sts.windows.net/1639b208-d5bf-4d71-9096-06163884a5e4/' does not have secrets list permission on key vault 'kv-poshared;location=eastus'. For help resolving this issue, please see https://go.microsoft.com/fwlink/?linkid=2125287","innererror":{"code":"AccessDenied"}}}
+2026-03-04T16:19:45.3750054Z 
+2026-03-04T16:19:45.3750101Z Headers:
+2026-03-04T16:19:45.3750151Z Cache-Control: no-cache
+2026-03-04T16:19:45.3750270Z Pragma: no-cache
+2026-03-04T16:19:45.3752526Z x-ms-keyvault-region: eastus
+2026-03-04T16:19:45.3752598Z x-ms-client-request-id: ca7fbd88-d7e9-45f0-a026-424b4e5bb8f6
+2026-03-04T16:19:45.3752655Z x-ms-request-id: 97c03036-cc4f-4f4c-a6aa-2800eefad603
+2026-03-04T16:19:45.3752707Z x-ms-keyvault-service-version: 1.9.3070.1
+2026-03-04T16:19:45.3752764Z x-ms-keyvault-network-info: conn_type=Ipv4;addr=40.64.96.235;act_addr_fam=InterNetwork;
+2026-03-04T16:19:45.3752814Z X-Content-Type-Options: REDACTED
+2026-03-04T16:19:45.3752865Z Strict-Transport-Security: REDACTED
+2026-03-04T16:19:45.3752937Z Date: Wed, 04 Mar 2026 16:19:41 GMT
+2026-03-04T16:19:45.3752991Z Content-Type: application/json; charset=utf-8
+2026-03-04T16:19:45.3753065Z Expires: -1
+2026-03-04T16:19:45.3753116Z Content-Length: 434
+2026-03-04T16:19:45.3753162Z 
+2026-03-04T16:23:49.5482601Z    _____                               
+2026-03-04T16:23:49.5484995Z   /  _  \ __________ _________   ____  
+2026-03-04T16:23:49.5485114Z  /  /_\  \\___   /  |  \_  __ \_/ __ \ 
+2026-03-04T16:23:49.5485186Z /    |    \/    /|  |  /|  | \/\  ___/ 
+2026-03-04T16:23:49.5485254Z \____|__  /_____ \____/ |__|    \___  >
+2026-03-04T16:23:49.5485333Z         \/      \/                  \/ 
+2026-03-04T16:23:49.5485434Z A P P   S E R V I C E   O N   L I N U X
+2026-03-04T16:23:49.5485498Z 
+2026-03-04T16:23:49.5485574Z Documentation       : http://aka.ms/webapp-linux
+2026-03-04T16:23:49.5485648Z Dotnet quickstart   : https://aka.ms/dotnet-qs
+2026-03-04T16:23:49.5485715Z ASP .NETCore Version: 10.0.2
+2026-03-04T16:23:49.5485782Z Instance Name       : lw1sdlwk000AKC
+2026-03-04T16:23:49.5485876Z Instance Id         : 14081d20018b15b1623fc720b48f16fa62465e5170c988d77c1ce70393fc7d40
+2026-03-04T16:23:49.5485941Z 
+2026-03-04T16:23:49.5486008Z Note: Any data outside '/home' is not persisted
+2026-03-04T16:24:33.6806941Z  * Starting OpenBSD Secure Shell server sshd
+2026-03-04T16:24:34.1861068Z    ...done.
+2026-03-04T16:24:34.3276112Z WEBSITES_INCLUDE_CLOUD_CERTS is not set to true.
+2026-03-04T16:24:35.0848134Z Updating certificates in /etc/ssl/certs...
+2026-03-04T16:27:06.8306777Z rehash: warning: skipping duplicate certificate in SSLcom-TLS-Root-2022-ECC.pem
+2026-03-04T16:27:06.8308217Z rehash: warning: skipping duplicate certificate in SSLcom-TLS-Root-2022-RSA.pem
+2026-03-04T16:27:07.8222495Z rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+2026-03-04T16:27:08.0205564Z 4 added, 0 removed; done.
+2026-03-04T16:27:08.0481914Z Running hooks in /etc/ca-certificates/update.d...
+2026-03-04T16:27:08.0767434Z done.
+2026-03-04T16:27:08.2086756Z CA certificates copied and updated successfully.
+2026-03-04T16:27:08.5469561Z  * Starting periodic command scheduler cron
+2026-03-04T16:27:08.6343815Z    ...done.
+2026-03-04T16:27:08.6625196Z Running oryx create-script -appPath /home/site/wwwroot -output /opt/startup/startup.sh -defaultAppFilePath /defaulthome/hostingstart/hostingstart.dll     -bindPort 8080 -bindPort2 '' -userStartupCommand 'dotnet PoMiniApps.Web.dll' 
+2026-03-04T16:27:08.9377535Z Could not find build manifest file at '/home/site/wwwroot/oryx-manifest.toml'
+2026-03-04T16:27:08.9462196Z Could not find operation ID in manifest. Generating an operation id...
+2026-03-04T16:27:08.9483429Z Build Operation ID: f48a8fc4-75b7-4830-9bc3-6347a10c410b
+2026-03-04T16:27:10.0607331Z 
+2026-03-04T16:27:10.0644304Z Agent extension 
+2026-03-04T16:27:10.0729755Z Before if loop >> DotNet Runtime 
+2026-03-04T16:27:10.1356029Z DotNet Runtime 10.0Writing output script to '/opt/startup/startup.sh'
+2026-03-04T16:27:10.2115064Z Running user provided startup command...
+2026-03-04T16:27:16.1355197Z [16:27:15 INF] Starting PoMiniApps application
+2026-03-04T16:48:31.0829438Z    _____                               
+2026-03-04T16:48:31.0830111Z   /  _  \ __________ _________   ____  
+2026-03-04T16:48:31.0830177Z  /  /_\  \\___   /  |  \_  __ \_/ __ \ 
+2026-03-04T16:48:31.0830229Z /    |    \/    /|  |  /|  | \/\  ___/ 
+2026-03-04T16:48:31.0830282Z \____|__  /_____ \____/ |__|    \___  >
+2026-03-04T16:48:31.0830335Z         \/      \/                  \/ 
+2026-03-04T16:48:31.0830386Z A P P   S E R V I C E   O N   L I N U X
+2026-03-04T16:48:31.0830433Z 
+2026-03-04T16:48:31.0830487Z Documentation       : http://aka.ms/webapp-linux
+2026-03-04T16:48:31.0830539Z Dotnet quickstart   : https://aka.ms/dotnet-qs
+2026-03-04T16:48:31.0830591Z ASP .NETCore Version: 10.0.2
+2026-03-04T16:48:31.0830675Z Instance Name       : lw1sdlwk000AKC
+2026-03-04T16:48:31.0830736Z Instance Id         : 14081d20018b15b1623fc720b48f16fa62465e5170c988d77c1ce70393fc7d40
+2026-03-04T16:48:31.0830782Z 
+2026-03-04T16:48:31.0830834Z Note: Any data outside '/home' is not persisted
+2026-03-04T16:48:54.1000258Z  * Starting OpenBSD Secure Shell server sshd
+2026-03-04T16:48:55.0490462Z    ...done.
+2026-03-04T16:48:55.1194900Z WEBSITES_INCLUDE_CLOUD_CERTS is not set to true.
+2026-03-04T16:48:55.7326418Z Updating certificates in /etc/ssl/certs...
+2026-03-04T16:50:55.3307683Z rehash: warning: skipping duplicate certificate in SSLcom-TLS-Root-2022-ECC.pem
+2026-03-04T16:50:55.3308206Z rehash: warning: skipping duplicate certificate in SSLcom-TLS-Root-2022-RSA.pem
+2026-03-04T16:50:57.3061889Z rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+2026-03-04T16:50:57.8633665Z 4 added, 0 removed; done.
+2026-03-04T16:50:57.8648573Z Running hooks in /etc/ca-certificates/update.d...
+2026-03-04T16:50:57.9335172Z done.
+2026-03-04T16:50:58.3417562Z CA certificates copied and updated successfully.
+2026-03-04T16:50:59.5887966Z  * Starting periodic command scheduler cron
+2026-03-04T16:51:00.0110338Z    ...done.
+2026-03-04T16:51:00.0110721Z Running oryx create-script -appPath /home/site/wwwroot -output /opt/startup/startup.sh -defaultAppFilePath /defaulthome/hostingstart/hostingstart.dll     -bindPort 8080 -bindPort2 '' -userStartupCommand 'dotnet PoMiniApps.Web.dll' 
+2026-03-04T16:51:00.8457796Z Could not find build manifest file at '/home/site/wwwroot/oryx-manifest.toml'
+2026-03-04T16:51:00.8571059Z Could not find operation ID in manifest. Generating an operation id...
+2026-03-04T16:51:00.8656155Z Build Operation ID: beb5c38d-aeb4-49f9-a763-56e306bbf70b
+2026-03-04T16:51:03.1279702Z 
+2026-03-04T16:51:03.1363065Z Agent extension 
+2026-03-04T16:51:03.1371201Z Before if loop >> DotNet Runtime 
+2026-03-04T16:51:03.1577036Z DotNet Runtime 10.0Writing output script to '/opt/startup/startup.sh'
+2026-03-04T16:51:03.2310933Z Running user provided startup command...
+2026-03-04T16:51:07.7829040Z [16:51:06 INF] Starting PoMiniApps application
