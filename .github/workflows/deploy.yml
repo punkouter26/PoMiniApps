@@ -38,13 +38,18 @@ jobs:
         run: dotnet test tests/PoMiniApps.UnitTests/PoMiniApps.UnitTests.csproj --configuration Release --no-build --verbosity normal
 
       - name: Publish web app
-        run: dotnet publish src/PoMiniApps.Web/PoMiniApps.Web.csproj --configuration Release --no-build --output ./publish
+        run: dotnet publish src/PoMiniApps.Web/PoMiniApps.Web.csproj --configuration Release --no-build --output ./publish_output
+
+      - name: Create deployment zip
+        run: |
+          cd ./publish_output
+          zip -r ../pominiapps.zip .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: pominiapps-app
-          path: ./publish
+          name: pominiapps-package
+          path: ./pominiapps.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -60,8 +65,11 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: pominiapps-app
-          path: ./publish
+          name: pominiapps-package
+          path: ./artifact
+
+      - name: Verify deployment package
+        run: ls -la ./artifact
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -92,7 +100,7 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.APP_NAME }}
-          package: ./publish
+          package: ./artifact/pominiapps.zip
 
       - name: Health check
         run: |
