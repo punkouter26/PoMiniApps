@@ -11,23 +11,15 @@ param sharedResourceGroupName string = 'PoShared'
 param existingLogAnalyticsName string = 'PoShared-LogAnalytics'
 
 @description('Name of the existing Application Insights in PoShared')
-param existingAppInsightsName string = 'appi-PoShared'
+param existingAppInsightsName string = 'poappideinsights8f9c9a4e'
 
-@description('App Service Plan name')
-param appServicePlanName string = 'asp-PoMiniApps'
+@description('Name of the existing App Service Plan in PoShared')
+param existingAppServicePlanName string = 'asp-poshared-linux'
 
-// ── App Service Plan ──────────────────────────────────────────────────────
-resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
-  name: appServicePlanName
-  location: location
-  sku: {
-    name: 'B1'
-    tier: 'Basic'
-  }
-  kind: 'linux'
-  properties: {
-    reserved: true
-  }
+// ── Reference existing App Service Plan from PoShared ──────────────────
+resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' existing = {
+  name: existingAppServicePlanName
+  scope: resourceGroup(sharedResourceGroupName)
 }
 
 resource sharedAppInsights 'Microsoft.Insights/components@2020-02-02' existing = {
@@ -54,11 +46,11 @@ resource webApp 'Microsoft.Web/sites@2022-03-01' = {
           value: 'kv-poshared'
         }
         {
-          name: 'Azure__StorageConnectionString'
-          value: storageAccount.properties.primaryEndpoints.table
+          name: 'AzureStorageConnectionString'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=core.windows.net'
         }
         {
-          name: 'Azure__TableStorageConnectionString'
+          name: 'Azure__StorageConnectionString'
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=core.windows.net'
         }
         {
