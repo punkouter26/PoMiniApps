@@ -232,8 +232,20 @@ try
         try
         {
             var rapperRepo = scope.ServiceProvider.GetRequiredService<IRapperRepository>();
-            await rapperRepo.SeedInitialRappersAsync();
-            Log.Information("Data seeding completed successfully");
+
+            // Avoid blocking app startup indefinitely if storage is slow/unreachable.
+            var seedTask = rapperRepo.SeedInitialRappersAsync();
+            var completedTask = await Task.WhenAny(seedTask, Task.Delay(TimeSpan.FromSeconds(20)));
+
+            if (completedTask == seedTask)
+            {
+                await seedTask;
+                Log.Information("Data seeding completed successfully");
+            }
+            else
+            {
+                Log.Warning("Data seeding timed out after 20 seconds; app startup will continue");
+            }
         }
         catch (Exception ex)
         {
