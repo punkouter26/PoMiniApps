@@ -4,9 +4,6 @@ param location string
 @description('Environment name')
 param environmentName string
 
-@description('Name of the existing App Service Plan in PoMiniApps resource group')
-param existingAppServicePlanName string = 'asp-PoMiniApps-dev'
-
 @description('Resource group of the shared resources')
 param sharedResourceGroupName string = 'PoShared'
 
@@ -16,9 +13,21 @@ param existingLogAnalyticsName string = 'PoShared-LogAnalytics'
 @description('Name of the existing Application Insights in PoShared')
 param existingAppInsightsName string = 'appi-PoShared'
 
-// ── Reference existing shared resources from PoShared resource group ─────────
-resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' existing = {
-  name: existingAppServicePlanName
+@description('App Service Plan name')
+param appServicePlanName string = 'asp-PoMiniApps'
+
+// ── App Service Plan ──────────────────────────────────────────────────────
+resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
+  name: appServicePlanName
+  location: location
+  sku: {
+    name: 'B1'
+    tier: 'Basic'
+  }
+  kind: 'linux'
+  properties: {
+    reserved: true
+  }
 }
 
 resource sharedAppInsights 'Microsoft.Insights/components@2020-02-02' existing = {
