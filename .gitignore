@@ -64,7 +64,11 @@ desktop.ini
 
 # Deployment artifacts
 publish_output/
+publish_test/
 *.zip
+
+# Markdown reports (auto-generated)
+DEPLOYMENT_REPORT.md
 
 # Docker
 .dockerignore
