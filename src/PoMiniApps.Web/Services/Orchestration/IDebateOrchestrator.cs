@@ -6,6 +6,6 @@ public interface IDebateOrchestrator
 {
     DebateState CurrentState { get; }
     Task StartNewDebateAsync(Rapper rapper1, Rapper rapper2, Topic topic);
-    Task SignalAudioPlaybackCompleteAsync();
+    Task SignalAudioPlaybackCompleteAsync(int turnNumber);
     void ResetDebate();
 }

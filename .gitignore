@@ -56,3 +56,21 @@ desktop.ini
 *.swo
 # Po-Tune state (local IDE tooling only)
 .potune-state.json
+
+# Test coverage and results
+**/coverage/
+**/TestResults/
+**/test-results.json
+
+# Deployment artifacts
+publish_output/
+*.zip
+
+# Docker
+.dockerignore
+
+# User secrets (never commit)
+secrets.json
+
+# Serilog file logs
+src/**/logs/

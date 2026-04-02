@@ -2,6 +2,7 @@ using FluentValidation;
 using PoMiniApps.Shared.Models;
 using PoMiniApps.Web.Services.Translation;
 using PoMiniApps.Web.Services.Telemetry;
+using System.ClientModel;
 using System.Diagnostics;
 
 namespace PoMiniApps.Web.Endpoints;
@@ -27,6 +28,13 @@ public static class TranslationEndpoints
             try
             {
                 translated = await translationService.TranslateToVictorianEnglishAsync(request.Text);
+            }
+            catch (ClientResultException ex) when (ex.Message.Contains("content_filter"))
+            {
+                return Results.Problem(
+                    detail: "The submitted text was blocked by the content filter. Please try different text.",
+                    title: "Content filtered",
+                    statusCode: StatusCodes.Status400BadRequest);
             }
             catch (InvalidOperationException ex)
             {

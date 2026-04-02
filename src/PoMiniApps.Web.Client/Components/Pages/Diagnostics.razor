@@ -2,6 +2,7 @@
 @using System.Net.Http.Json
 @using System.Text.Json
 @inject HttpClient Http
+@inject NavigationManager Navigation
 @rendermode InteractiveWebAssembly
 
 <PageTitle>PoMiniApps — Diagnostics</PageTitle>
@@ -14,9 +15,8 @@
             dependencies</p>
         </div>
 
-        <RadzenButton Text="🔄 Run All Checks" Icon="play_arrow" Click="@RunDiagnosticsAsync"
-                      ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large"                  IsBusy="@_loading" class="rz-mb-4"
-                      Style="width: 100%;" />
+        <RadzenButton Text="Run All Checks" Icon="play_arrow" Click="@RunDiagnosticsAsync" ButtonStyle="ButtonStyle.Primary"
+                      Size="ButtonSize.Large" IsBusy="@_loading" class="rz-mb-4" Style="width: 100%;" />
 
         @if (_loading)
         {
@@ -84,7 +84,7 @@
                     <div class="config-snapshot">
                         <pre>@_configJson</pre>
                     </div>
-                    <RadzenButton Text="📋 Copy Configuration" Icon="content_copy" ButtonStyle="ButtonStyle.Secondary"
+                    <RadzenButton Text="Copy Configuration" Icon="content_copy" ButtonStyle="ButtonStyle.Secondary"
                                   Style="margin-top: 1rem; width: 100%;" />
                 </div>
             }
@@ -102,8 +102,10 @@
         _loading = true;
         try
         {
-            _results = await Http.GetFromJsonAsync<List<DiagResult>>("/api/diagnostics");
-            var config = await Http.GetFromJsonAsync<Dictionary<string, string>>("/api/diagnostics/config");
+            // Use absolute URL for WASM compatibility
+            var baseUrl = Navigation.BaseUri.TrimEnd('/');
+            _results = await Http.GetFromJsonAsync<List<DiagResult>>($"{baseUrl}/api/diagnostics");
+            var config = await Http.GetFromJsonAsync<Dictionary<string, string>>($"{baseUrl}/api/diagnostics/config");
             _configJson = JsonSerializer.Serialize(config ?? new Dictionary<string, string>(), new JsonSerializerOptions
             {
                 WriteIndented = true

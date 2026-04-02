@@ -41,9 +41,9 @@ public class DebateHub : Hub
         await _orchestrator.StartNewDebateAsync(rapper1, rapper2, topic);
     }
 
-    public Task AudioPlaybackComplete()
+    public Task AudioPlaybackComplete(int turnNumber)
     {
-        return _orchestrator.SignalAudioPlaybackCompleteAsync();
+        return _orchestrator.SignalAudioPlaybackCompleteAsync(turnNumber);
     }
 
     public void ResetDebate()

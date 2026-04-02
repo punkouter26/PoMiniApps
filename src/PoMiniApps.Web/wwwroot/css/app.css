@@ -8,6 +8,16 @@
     --danger-color: #ff5252;
     --info-color: #448aff;
 
+    /* Mini app container (replaces MiniAppLayout.razor wrapper) */
+    .miniapp-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .miniapp-content {
+        width: 100%;
+    }
+
     /* Neutral colors */
     --bg-dark: #0a0a12;
     --bg-darker: #0f0f1a;

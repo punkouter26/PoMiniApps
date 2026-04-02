@@ -29,11 +29,16 @@ try
 {
     Log.Information("Starting PoMiniApps application");
 
+    // Create logs directory if it doesn't exist
+    var logsDirectory = Path.Combine(AppContext.BaseDirectory, "logs");
+    Directory.CreateDirectory(logsDirectory);
+
     var builder = WebApplication.CreateBuilder(args);
 
     // ── Serilog ──────────────────────────────────────────────────────────
     builder.Host.UseSerilog((context, services, configuration) =>
     {
+        var logsPath = Path.Combine(AppContext.BaseDirectory, "logs", "pominiapps-.txt");
         var logConfig = configuration
             .ReadFrom.Configuration(context.Configuration)
             .ReadFrom.Services(services)
@@ -43,7 +48,7 @@ try
             .WriteTo.Console(
                 outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
             .WriteTo.File(
-                path: "logs/pominiapps-.txt",
+                path: logsPath,
                 rollingInterval: RollingInterval.Day,
                 restrictedToMinimumLevel: LogEventLevel.Information,
                 retainedFileCountLimit: 30,
@@ -168,6 +173,9 @@ try
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
 
+    // ── Health Checks ───────────────────────────────────────────────────
+    builder.Services.AddHealthChecks();
+
     // ── Session ──────────────────────────────────────────────────────────
     builder.Services.AddDistributedMemoryCache();
     builder.Services.AddSession(options =>
@@ -208,6 +216,9 @@ try
 
     // ── SignalR hub ──────────────────────────────────────────────────────
     app.MapHub<DebateHub>("/debatehub");
+
+    // ── Health Check Endpoint ────────────────────────────────────────────
+    app.MapHealthChecks("/health");
 
     // ── Blazor ───────────────────────────────────────────────────────────
     app.MapStaticAssets();

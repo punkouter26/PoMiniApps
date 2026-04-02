@@ -1,6 +1,8 @@
 using Azure;
 using Azure.AI.OpenAI;
+using Microsoft.Extensions.Options;
 using PoMiniApps.Shared.Models;
+using PoMiniApps.Web.Configuration;
 using OpenAI.Chat;
 using System.Text.Json;
 
@@ -20,24 +22,15 @@ public class AzureOpenAIService : IAzureOpenAIService
 
     public bool IsConfigured { get; }
 
-    public AzureOpenAIService(IConfiguration configuration, ILogger<AzureOpenAIService> logger)
+    public AzureOpenAIService(IOptions<ApiSettings> apiSettings, ILogger<AzureOpenAIService> logger)
     {
         _logger = logger;
-        var openAIEndpoint = ResolveConfigValue(
-            configuration["Azure:OpenAI:Endpoint"],
-            configuration["AzureOpenAI:Endpoint"],
-            configuration["Azure:AzureOpenAIEndpoint"]);
-
-        var openAIApiKey = ResolveConfigValue(
-            configuration["Azure:OpenAI:ApiKey"],
-            configuration["AzureOpenAI:ApiKey"],
-            configuration["Azure:AzureOpenAIApiKey"]);
-
-        _openAIDeploymentName = ResolveConfigValue(
-            configuration["Azure:OpenAI:DeploymentName"],
-            configuration["AzureOpenAI:DeploymentName"],
-            configuration["Azure:AzureOpenAIDeploymentName"],
-            "gpt-4o");
+        var settings = apiSettings.Value;
+        var openAIEndpoint = settings.AzureOpenAIEndpoint;
+        var openAIApiKey = settings.AzureOpenAIApiKey;
+        _openAIDeploymentName = string.IsNullOrWhiteSpace(settings.AzureOpenAIDeploymentName)
+            ? "gpt-4o"
+            : settings.AzureOpenAIDeploymentName;
 
         if (string.IsNullOrEmpty(openAIEndpoint) || string.IsNullOrEmpty(openAIApiKey))
         {
@@ -50,19 +43,6 @@ public class AzureOpenAIService : IAzureOpenAIService
         _chatClient = _openAIClient.GetChatClient(_openAIDeploymentName);
         IsConfigured = true;
         _logger.LogInformation("Azure OpenAI client initialized with endpoint: {Endpoint}", openAIEndpoint);
-    }
-
-    private static string ResolveConfigValue(params string?[] values)
-    {
-        foreach (var value in values)
-        {
-            if (!string.IsNullOrWhiteSpace(value))
-            {
-                return value;
-            }
-        }
-
-        return string.Empty;
     }
 
     public async Task<string> GenerateDebateTurnAsync(string prompt, int maxTokens, CancellationToken cancellationToken)

@@ -1,4 +1,3 @@
-using PoMiniApps.Shared.Models;
 using System.Globalization;
 
 namespace PoMiniApps.Web.Endpoints;
@@ -12,8 +11,47 @@ public static class DiagnosticsEndpoints
     {
         var group = endpoints.MapGroup("/api/diagnostics").WithTags("Diagnostics").WithOpenApi();
 
-        group.MapGet("/config", (IConfiguration configuration) =>
+        // Main diagnostics endpoint that returns health check results
+        group.MapGet("", async (IServiceProvider services, IConfiguration configuration, ILogger<Program> logger) =>
         {
+            var results = new List<DiagnosticResult>();
+
+            // Check system health
+            try
+            {
+                results.Add(new DiagnosticResult
+                {
+                    CheckName = "API Health",
+                    Category = "System",
+                    Success = true,
+                    Message = "API server responding normally"
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "API health check failed");
+                results.Add(new DiagnosticResult
+                {
+                    CheckName = "API Health",
+                    Category = "System",
+                    Success = false,
+                    Message = $"API health check failed: {ex.Message}"
+                });
+            }
+
+            return Results.Ok(results);
+        })
+        .WithName("GetDiagnostics")
+        .WithSummary("Returns all diagnostic health check results.");
+
+        group.MapGet("/config", (IConfiguration configuration, IHostEnvironment env) =>
+        {
+            // Only allow in Development environment to prevent exposing secrets
+            if (!env.IsDevelopment())
+            {
+                return Results.StatusCode(StatusCodes.Status403Forbidden);
+            }
+
             var values = configuration
                 .AsEnumerable()
                 .Where(entry => !string.IsNullOrWhiteSpace(entry.Value))
@@ -28,14 +66,26 @@ public static class DiagnosticsEndpoints
             return Results.Ok(values);
         })
         .WithName("GetDiagnosticsConfiguration")
-        .WithSummary("Returns application configuration key/value pairs with sensitive values masked.");
+        .WithSummary("Returns application configuration key/value pairs with sensitive values masked (Development only).");
 
         return endpoints;
     }
 
+    /// <summary>
+    /// Diagnostic result model for health checks.
+    /// </summary>
+    private class DiagnosticResult
+    {
+        public string CheckName { get; set; } = "";
+        public string Category { get; set; } = "Other";
+        public bool Success { get; set; }
+        public bool IsWarning { get; set; }
+        public string Message { get; set; } = "";
+    }
+
     private static bool ShouldMask(string key)
     {
-        string[] sensitiveTokens = ["password", "secret", "token", "key", "connectionstring", "clientid", "clientsecret"];
+        string[] sensitiveTokens = ["password", "secret", "token", "key", "connectionstring", "clientid", "clientsecret", "pat", "credential", "privatekey", "apikey"];
 
         return sensitiveTokens.Any(token => key.Contains(token, StringComparison.OrdinalIgnoreCase));
     }

@@ -1,4 +1,6 @@
 using Microsoft.CognitiveServices.Speech;
+using Microsoft.Extensions.Options;
+using PoMiniApps.Web.Configuration;
 
 namespace PoMiniApps.Web.Services.Speech;
 
@@ -12,11 +14,12 @@ public class TextToSpeechService : ITextToSpeechService
     private readonly ILogger<TextToSpeechService> _logger;
     public bool IsConfigured { get; }
 
-    public TextToSpeechService(IConfiguration configuration, ILogger<TextToSpeechService> logger)
+    public TextToSpeechService(IOptions<ApiSettings> apiSettings, ILogger<TextToSpeechService> logger)
     {
         _logger = logger;
-        var speechRegion = configuration["AzureSpeech:Region"];
-        var speechSubscriptionKey = configuration["AzureSpeech:SubscriptionKey"];
+        var settings = apiSettings.Value;
+        var speechRegion = settings.AzureSpeechRegion;
+        var speechSubscriptionKey = settings.AzureSpeechSubscriptionKey;
 
         if (string.IsNullOrEmpty(speechRegion) || string.IsNullOrEmpty(speechSubscriptionKey))
         {

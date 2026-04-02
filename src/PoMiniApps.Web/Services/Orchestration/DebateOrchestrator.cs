@@ -23,12 +23,13 @@ public class DebateOrchestrator : IDebateOrchestrator
 
     private CancellationTokenSource? _debateCancellationTokenSource;
     private TaskCompletionSource<bool> _audioPlaybackCompletionSource;
+    private int _currentAudioTurnAwaited;
 
     private const int MaxDebateTurns = 6;
     private const int MaxTokensPerTurn = 150;
     private const string Rapper1Voice = "en-US-GuyNeural";
     private const string Rapper2Voice = "en-US-JennyNeural";
-    private static readonly TimeSpan AudioPlaybackTimeout = TimeSpan.FromSeconds(15); // Reduced from 60s for better UX
+    private static readonly TimeSpan AudioPlaybackTimeout = TimeSpan.FromSeconds(60);
 
     public DebateOrchestrator(ILogger<DebateOrchestrator> logger, IServiceScopeFactory scopeFactory, IHubContext<DebateHub> hubContext)
     {
@@ -46,6 +47,7 @@ public class DebateOrchestrator : IDebateOrchestrator
         _debateCancellationTokenSource = null;
         _audioPlaybackCompletionSource?.TrySetResult(true);
         _audioPlaybackCompletionSource = new TaskCompletionSource<bool>();
+        _currentAudioTurnAwaited = 0;
         _currentState = DebateStateFactory.CreateEmpty();
         _ = NotifyStateChangeAsync();
     }
@@ -107,6 +109,7 @@ public class DebateOrchestrator : IDebateOrchestrator
                 _currentState.CurrentTurn++;
                 _currentState.IsGeneratingTurn = true;
                 _currentState.ErrorMessage = string.Empty;
+                _currentState.CurrentTurnAudio = [];
                 await NotifyStateChangeAsync();
 
                 string currentRapper = _currentState.IsRapper1Turn ? _currentState.Rapper1.Name : _currentState.Rapper2.Name;
@@ -148,12 +151,13 @@ public class DebateOrchestrator : IDebateOrchestrator
                 bool hasAudio = _currentState.CurrentTurnAudio is { Length: > 0 };
                 if (hasAudio)
                 {
+                    _currentAudioTurnAwaited = _currentState.CurrentTurn;
+                    _audioPlaybackCompletionSource = new TaskCompletionSource<bool>();
                     var completed = await Task.WhenAny(_audioPlaybackCompletionSource.Task, Task.Delay(AudioPlaybackTimeout, cancellationToken));
                     if (completed != _audioPlaybackCompletionSource.Task)
                         _logger.LogWarning("Audio playback timed out for turn {Turn}, continuing.", _currentState.CurrentTurn);
+                    _currentAudioTurnAwaited = 0;
                 }
-
-                _audioPlaybackCompletionSource = new TaskCompletionSource<bool>();
                 _currentState.IsRapper1Turn = !_currentState.IsRapper1Turn;
             }
 
@@ -201,9 +205,16 @@ public class DebateOrchestrator : IDebateOrchestrator
         }
     }
 
-    public Task SignalAudioPlaybackCompleteAsync()
+    public Task SignalAudioPlaybackCompleteAsync(int turnNumber)
     {
-        _audioPlaybackCompletionSource.TrySetResult(true);
+        if (turnNumber == _currentAudioTurnAwaited)
+        {
+            _audioPlaybackCompletionSource.TrySetResult(true);
+        }
+        else
+        {
+            _logger.LogDebug("Ignoring stale AudioPlaybackComplete for turn {Turn} (awaiting turn {Current})", turnNumber, _currentAudioTurnAwaited);
+        }
         return Task.CompletedTask;
     }
 

@@ -1,32 +1,34 @@
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using PoMiniApps.Shared.Models;
+using PoMiniApps.Web.Configuration;
 using PoMiniApps.Web.Services.AI;
 
 namespace PoMiniApps.UnitTests.Services;
 
 public class AzureOpenAIServiceTests
 {
-    private readonly Mock<IConfiguration> _configurationMock;
     private readonly Mock<ILogger<AzureOpenAIService>> _loggerMock;
 
     public AzureOpenAIServiceTests()
     {
-        _configurationMock = new Mock<IConfiguration>();
         _loggerMock = new Mock<ILogger<AzureOpenAIService>>();
     }
+
+    private static IOptions<ApiSettings> BuildOptions(string endpoint = "", string apiKey = "", string deploymentName = "gpt-4o")
+        => Options.Create(new ApiSettings
+        {
+            AzureOpenAIEndpoint = endpoint,
+            AzureOpenAIApiKey = apiKey,
+            AzureOpenAIDeploymentName = deploymentName
+        });
 
     [Fact]
     public void Constructor_WithMissingEndpoint_MarksServiceAsUnconfigured()
     {
-        // Arrange
-        _configurationMock.Setup(c => c["Azure:OpenAI:Endpoint"]).Returns("");
-        _configurationMock.Setup(c => c["Azure:OpenAI:ApiKey"]).Returns("test-key");
-        _configurationMock.Setup(c => c["Azure:OpenAI:DeploymentName"]).Returns("gpt-4o");
-
         // Act
-        var service = new AzureOpenAIService(_configurationMock.Object, _loggerMock.Object);
+        var service = new AzureOpenAIService(BuildOptions(endpoint: "", apiKey: "test-key"), _loggerMock.Object);
 
         // Assert
         service.IsConfigured.Should().BeFalse();
@@ -43,13 +45,9 @@ public class AzureOpenAIServiceTests
     [Fact]
     public void Constructor_WithMissingApiKey_MarksServiceAsUnconfigured()
     {
-        // Arrange
-        _configurationMock.Setup(c => c["Azure:OpenAI:Endpoint"]).Returns("https://test.openai.azure.com/");
-        _configurationMock.Setup(c => c["Azure:OpenAI:ApiKey"]).Returns("");
-        _configurationMock.Setup(c => c["Azure:OpenAI:DeploymentName"]).Returns("gpt-4o");
-
         // Act
-        var service = new AzureOpenAIService(_configurationMock.Object, _loggerMock.Object);
+        var service = new AzureOpenAIService(
+            BuildOptions(endpoint: "https://test.openai.azure.com/", apiKey: ""), _loggerMock.Object);
 
         // Assert
         service.IsConfigured.Should().BeFalse();
@@ -58,13 +56,9 @@ public class AzureOpenAIServiceTests
     [Fact]
     public void Constructor_WithValidConfiguration_MarksServiceAsConfigured()
     {
-        // Arrange
-        _configurationMock.Setup(c => c["Azure:OpenAI:Endpoint"]).Returns("https://test.openai.azure.com/");
-        _configurationMock.Setup(c => c["Azure:OpenAI:ApiKey"]).Returns("test-api-key");
-        _configurationMock.Setup(c => c["Azure:OpenAI:DeploymentName"]).Returns("gpt-4o");
-
         // Act
-        var service = new AzureOpenAIService(_configurationMock.Object, _loggerMock.Object);
+        var service = new AzureOpenAIService(
+            BuildOptions("https://test.openai.azure.com/", "test-api-key"), _loggerMock.Object);
 
         // Assert
         service.IsConfigured.Should().BeTrue();
@@ -81,13 +75,9 @@ public class AzureOpenAIServiceTests
     [Fact]
     public void Constructor_WithMissingDeploymentName_UsesDefaultGpt4o()
     {
-        // Arrange
-        _configurationMock.Setup(c => c["Azure:OpenAI:Endpoint"]).Returns("https://test.openai.azure.com/");
-        _configurationMock.Setup(c => c["Azure:OpenAI:ApiKey"]).Returns("test-api-key");
-        _configurationMock.Setup(c => c["Azure:OpenAI:DeploymentName"]).Returns((string?)null);
-
         // Act
-        var service = new AzureOpenAIService(_configurationMock.Object, _loggerMock.Object);
+        var service = new AzureOpenAIService(
+            BuildOptions("https://test.openai.azure.com/", "test-api-key", deploymentName: ""), _loggerMock.Object);
 
         // Assert
         service.IsConfigured.Should().BeTrue();
@@ -97,9 +87,7 @@ public class AzureOpenAIServiceTests
     public async Task GenerateDebateTurnAsync_WithUnconfiguredService_ThrowsInvalidOperationException()
     {
         // Arrange
-        _configurationMock.Setup(c => c["Azure:OpenAI:Endpoint"]).Returns("");
-        _configurationMock.Setup(c => c["Azure:OpenAI:ApiKey"]).Returns("");
-        var service = new AzureOpenAIService(_configurationMock.Object, _loggerMock.Object);
+        var service = new AzureOpenAIService(BuildOptions(), _loggerMock.Object);
 
         // Act
         var act = async () => await service.GenerateDebateTurnAsync("Test prompt", 100, CancellationToken.None);
@@ -113,9 +101,7 @@ public class AzureOpenAIServiceTests
     public async Task JudgeDebateAsync_WithUnconfiguredService_ThrowsInvalidOperationException()
     {
         // Arrange
-        _configurationMock.Setup(c => c["Azure:OpenAI:Endpoint"]).Returns("");
-        _configurationMock.Setup(c => c["Azure:OpenAI:ApiKey"]).Returns("");
-        var service = new AzureOpenAIService(_configurationMock.Object, _loggerMock.Object);
+        var service = new AzureOpenAIService(BuildOptions(), _loggerMock.Object);
 
         // Act
         var act = async () => await service.JudgeDebateAsync(
@@ -129,13 +115,9 @@ public class AzureOpenAIServiceTests
     [Fact]
     public void IsConfigured_WhenEndpointAndKeyAreSet_ReturnsTrue()
     {
-        // Arrange
-        _configurationMock.Setup(c => c["Azure:OpenAI:Endpoint"]).Returns("https://test.openai.azure.com/");
-        _configurationMock.Setup(c => c["Azure:OpenAI:ApiKey"]).Returns("valid-key");
-        _configurationMock.Setup(c => c["Azure:OpenAI:DeploymentName"]).Returns("gpt-4o");
-
         // Act
-        var service = new AzureOpenAIService(_configurationMock.Object, _loggerMock.Object);
+        var service = new AzureOpenAIService(
+            BuildOptions("https://test.openai.azure.com/", "valid-key"), _loggerMock.Object);
 
         // Assert
         service.IsConfigured.Should().BeTrue();
@@ -144,12 +126,8 @@ public class AzureOpenAIServiceTests
     [Fact]
     public void IsConfigured_WhenEndpointIsMissing_ReturnsFalse()
     {
-        // Arrange
-        _configurationMock.Setup(c => c["Azure:OpenAI:Endpoint"]).Returns("");
-        _configurationMock.Setup(c => c["Azure:OpenAI:ApiKey"]).Returns("valid-key");
-
         // Act
-        var service = new AzureOpenAIService(_configurationMock.Object, _loggerMock.Object);
+        var service = new AzureOpenAIService(BuildOptions(endpoint: "", apiKey: "valid-key"), _loggerMock.Object);
 
         // Assert
         service.IsConfigured.Should().BeFalse();
@@ -158,12 +136,9 @@ public class AzureOpenAIServiceTests
     [Fact]
     public void IsConfigured_WhenApiKeyIsMissing_ReturnsFalse()
     {
-        // Arrange
-        _configurationMock.Setup(c => c["Azure:OpenAI:Endpoint"]).Returns("https://test.openai.azure.com/");
-        _configurationMock.Setup(c => c["Azure:OpenAI:ApiKey"]).Returns("");
-
         // Act
-        var service = new AzureOpenAIService(_configurationMock.Object, _loggerMock.Object);
+        var service = new AzureOpenAIService(
+            BuildOptions("https://test.openai.azure.com/", apiKey: ""), _loggerMock.Object);
 
         // Assert
         service.IsConfigured.Should().BeFalse();
@@ -172,12 +147,8 @@ public class AzureOpenAIServiceTests
     [Fact]
     public void Constructor_LogsWarningWhenNotConfigured()
     {
-        // Arrange
-        _configurationMock.Setup(c => c["Azure:OpenAI:Endpoint"]).Returns((string?)null);
-        _configurationMock.Setup(c => c["Azure:OpenAI:ApiKey"]).Returns((string?)null);
-
         // Act
-        var service = new AzureOpenAIService(_configurationMock.Object, _loggerMock.Object);
+        var service = new AzureOpenAIService(BuildOptions(), _loggerMock.Object);
 
         // Assert
         _loggerMock.Verify(
@@ -193,15 +164,11 @@ public class AzureOpenAIServiceTests
     [Fact]
     public void Constructor_WithNullConfiguration_MarksAsUnconfigured()
     {
-        // Arrange
-        _configurationMock.Setup(c => c["Azure:OpenAI:Endpoint"]).Returns((string?)null);
-        _configurationMock.Setup(c => c["Azure:OpenAI:ApiKey"]).Returns((string?)null);
-        _configurationMock.Setup(c => c["Azure:OpenAI:DeploymentName"]).Returns((string?)null);
-
         // Act
-        var service = new AzureOpenAIService(_configurationMock.Object, _loggerMock.Object);
+        var service = new AzureOpenAIService(BuildOptions(), _loggerMock.Object);
 
         // Assert
         service.IsConfigured.Should().BeFalse();
     }
 }
+

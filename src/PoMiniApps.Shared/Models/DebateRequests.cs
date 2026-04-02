@@ -38,6 +38,4 @@ public class DebateState
     public DebateStats Stats { get; set; } = new();
     public string ErrorMessage { get; set; } = string.Empty;
     public bool IsGeneratingTurn { get; set; }
-    public RhymeAnalytics? RhymeAnalytics { get; set; }
-    public TurnAnalytics? CurrentTurnAnalytics { get; set; }
 }

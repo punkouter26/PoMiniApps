@@ -11,7 +11,7 @@
             {
                 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem"
                              Style="margin-left: auto; font-size: 0.9rem;">
-                    <RadzenLink Path="/" Icon="home" IconColor="rgba(255,255,255,0.6)"                                Style="color: rgba(255,255,255,0.6);"
+                    <RadzenLink Path="/" Icon="home" IconColor="rgba(255,255,255,0.6)" Style="color: rgba(255,255,255,0.6);"
                                 title="Home" />
                     <span style="color: rgba(255,255,255,0.3);">›</span>
                     <span style="color: rgba(255,255,255,0.7);">@CurrentAppName</span>
@@ -50,27 +50,6 @@
             var path = Navigation.ToBaseRelativePath(Navigation.Uri).ToLowerInvariant();
             if (path.Contains("rap-battle") || path.Contains("rap-debate")) return "Rap Battle Arena";
             if (path.Contains("victorian") || path.Contains("translat")) return "Victorian Translator";
-            return null;
-        }
-    }
-
-    private string CurrentAppRoute
-    {
-        get
-        {
-            var path = Navigation.ToBaseRelativePath(Navigation.Uri).ToLowerInvariant();
-            if (path.Contains("rap-battle") || path.Contains("rap-debate")) return "/apps/lingual/rap-battle";
-            if (path.Contains("victorian") || path.Contains("translat")) return "/apps/lingual/victorian-translator";
-            return "/";
-        }
-    }
-
-    private string? CurrentPageName
-    {
-        get
-        {
-            var path = Navigation.ToBaseRelativePath(Navigation.Uri).ToLowerInvariant();
-            if (path.Contains("diagnostics")) return "Diagnostics";
             return null;
         }
     }

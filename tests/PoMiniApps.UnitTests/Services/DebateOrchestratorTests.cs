@@ -47,7 +47,7 @@ public class DebateOrchestratorTests
     [Fact]
     public void SignalAudioPlaybackComplete_CompletesWithoutError()
     {
-        var task = _sut.SignalAudioPlaybackCompleteAsync();
+        var task = _sut.SignalAudioPlaybackCompleteAsync(0);
         task.IsCompleted.Should().BeTrue();
     }
 }
