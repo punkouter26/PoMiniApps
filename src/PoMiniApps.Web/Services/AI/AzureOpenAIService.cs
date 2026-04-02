@@ -64,7 +64,7 @@ public class AzureOpenAIService : IAzureOpenAIService
                     new UserChatMessage(prompt)
                 };
 
-                var options = new ChatCompletionOptions() { Temperature = 0.7f, MaxOutputTokenCount = maxTokens };
+                var options = new ChatCompletionOptions() { Temperature = 0.7f };
                 var response = await _chatClient.CompleteChatAsync(messages, options, cancellationToken);
 
                 if (response.Value.Content.Count == 0)

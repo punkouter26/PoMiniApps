@@ -64,7 +64,7 @@ public class TranslationService : ITranslationService
             new SystemChatMessage(SystemPrompt),
             new UserChatMessage(modernText)
         };
-        var options = new ChatCompletionOptions { MaxOutputTokenCount = MaxTokens, Temperature = 0.7f };
+        var options = new ChatCompletionOptions { Temperature = 0.7f };
 
         var response = await _chatClient.CompleteChatAsync(messages, options, cancellationToken);
         var translatedText = response.Value.Content[0].Text;
