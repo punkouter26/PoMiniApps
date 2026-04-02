@@ -1,3 +1,0 @@
-<step title="Startup Request" date="2026-03-04T04:53:49.580" instance="14081d" url="/api/deployments/latest?deployer=OneDeploy&amp;time=2026-03-04_04-44-40Z" method="GET" type="request" pid="863,1,5" ScmType="None" >
-  <step title="Cleanup Xml Logs" date="2026-03-04T04:53:49.627" /><!-- duration: 23ms -->
-</step><!-- duration: 150ms -->

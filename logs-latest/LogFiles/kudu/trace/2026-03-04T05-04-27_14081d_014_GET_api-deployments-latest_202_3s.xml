@@ -1,9 +1,0 @@
-<step title="Incoming Request" date="2026-03-04T05:04:27.143" instance="14081d" url="/api/deployments/latest?deployer=OneDeploy&amp;time=2026-03-04_05-03-33Z" method="GET" type="request" pid="863,1,19" Host="pominiapps.scm.azurewebsites.net" User-Agent="GITHUBACTIONS_DeployWebAppToAzure_2ccc6b85bb7a081143755d0a53ff740b9aa0115453702c1ad27a216945dc5701_v3.0.7" Authorization="Bea..." Content-Type="application/json; charset=utf-8" Cookie="ARRAffinity=14081d20018b15b1623fc720b48f16fa62465e5170c988d77c1ce70393fc7d40; ARRAffinitySameSite=14081d20018b15b1623fc720b48f16fa62465e5170c988d77c1ce70393fc7d40" Content-Length="0" X-ARR-LOG-ID="ec7964c2-493e-4946-835e-60844d25df2a" CLIENT-IP="20.109.36.226:13329" X-SITE-DEPLOYMENT-ID="PoMiniApps" WAS-DEFAULT-HOSTNAME="pominiapps.scm.azurewebsites.net" X-Forwarded-Proto="https" X-AppService-Proto="https" X-Forwarded-TlsVersion="1.3" X-WAWS-Unencoded-URL="/api/deployments/latest?deployer=OneDeploy&amp;time=2026-03-04_05-03-33Z" X-Client-IP="20.109.36.226" X-Client-Port="13329" >
-  <step title="Cleanup Xml Logs" date="2026-03-04T05:04:27.174" /><!-- duration: 120ms -->
-  <step title="DeploymentService.GetResult" date="2026-03-04T05:04:27.347" >
-    <step title="DeploymentService.GetLatestDeployment" date="2026-03-04T05:04:27.374" >
-      <step title="DeploymentManager.GetResults" date="2026-03-04T05:04:27.386" /><!-- duration: 2018ms -->
-    </step><!-- duration: 2304ms -->
-  </step><!-- duration: 2390ms -->
-  <step title="Outgoing response" date="2026-03-04T05:04:29.801" type="response" statusCode="202" statusText="Accepted" /><!-- duration: 278ms -->
-</step><!-- duration: 2987ms -->
