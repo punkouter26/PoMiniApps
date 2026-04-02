@@ -51,28 +51,24 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Wait for App Service SCM to be ready
-        run: |
-          echo "Waiting for App Service SCM endpoint to be ready..."
-          for i in $(seq 1 10); do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://pominiapps.scm.azurewebsites.net/ || echo "000")
-            echo "Attempt $i: SCM status = $STATUS"
-            if [ "$STATUS" = "200" ] || [ "$STATUS" = "302" ] || [ "$STATUS" = "401" ]; then
-              echo "SCM is ready"
-              break
-            fi
-            sleep 10
-          done
-
       - name: Deploy to Azure App Service
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: ${{ env.APP_NAME }}
-          package: ./pominiapps.zip
+        run: |
+          echo "Deploying to Azure App Service..."
+          for attempt in 1 2 3; do
+            echo "Deploy attempt $attempt..."
+            az webapp deploy \
+              --name ${{ env.APP_NAME }} \
+              --resource-group PoMiniApps \
+              --src-path ./pominiapps.zip \
+              --type zip \
+              --timeout 300 && echo "Deployment succeeded" && break
+            echo "Attempt $attempt failed, waiting 30s..."
+            sleep 30
+          done
 
       - name: Verify deployment
         run: |
-          echo "Deployed to https://pominiapps.azurewebsites.net"
+          echo "Waiting 30s for app to start..."
           sleep 30
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://pominiapps.azurewebsites.net/health || echo "000")
           echo "Health check HTTP status: $STATUS"
